@@ -1,0 +1,527 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DC4CEA311880700C00D90BEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA301880700C00D90BEE /* Foundation.framework */; };
+		DC4CEA331880700C00D90BEE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA321880700C00D90BEE /* CoreGraphics.framework */; };
+		DC4CEA351880700C00D90BEE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA341880700C00D90BEE /* UIKit.framework */; };
+		DC4CEA3B1880700C00D90BEE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA391880700C00D90BEE /* InfoPlist.strings */; };
+		DC4CEA3D1880700C00D90BEE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA3C1880700C00D90BEE /* main.m */; };
+		DC4CEA411880700C00D90BEE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA401880700C00D90BEE /* AppDelegate.m */; };
+		DC4CEA441880700C00D90BEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA421880700C00D90BEE /* Main.storyboard */; };
+		DC4CEA471880700C00D90BEE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA461880700C00D90BEE /* ViewController.m */; };
+		DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA481880700C00D90BEE /* Images.xcassets */; };
+		DC4CEA501880700C00D90BEE /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA4F1880700C00D90BEE /* XCTest.framework */; };
+		DC4CEA511880700C00D90BEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA301880700C00D90BEE /* Foundation.framework */; };
+		DC4CEA521880700C00D90BEE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA341880700C00D90BEE /* UIKit.framework */; };
+		DC4CEA5A1880700C00D90BEE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA581880700C00D90BEE /* InfoPlist.strings */; };
+		DC4CEA5C1880700C00D90BEE /* panelappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA5B1880700C00D90BEE /* panelappTests.m */; };
+		DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */; };
+		DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */; };
+		DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6B1880727500D90BEE /* Accounts.framework */; };
+		DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6D1880728100D90BEE /* CoreLocation.framework */; };
+		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
+		DCCC76CD188F094D00495880 /* PanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* PanelSdk.m */; };
+		DCCC76D4188F154E00495880 /* AppUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76D3188F154E00495880 /* AppUtils.m */; };
+		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DC4CEA531880700C00D90BEE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DC4CEA251880700C00D90BEE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DC4CEA2C1880700C00D90BEE;
+			remoteInfo = panelapp;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DC4CEA2D1880700C00D90BEE /* panelapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = panelapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC4CEA301880700C00D90BEE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DC4CEA321880700C00D90BEE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		DC4CEA341880700C00D90BEE /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		DC4CEA381880700C00D90BEE /* panelapp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "panelapp-Info.plist"; sourceTree = "<group>"; };
+		DC4CEA3A1880700C00D90BEE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DC4CEA3C1880700C00D90BEE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DC4CEA3E1880700C00D90BEE /* panelapp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "panelapp-Prefix.pch"; sourceTree = "<group>"; };
+		DC4CEA3F1880700C00D90BEE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		DC4CEA401880700C00D90BEE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		DC4CEA431880700C00D90BEE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		DC4CEA451880700C00D90BEE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		DC4CEA461880700C00D90BEE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		DC4CEA481880700C00D90BEE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = panelappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DC4CEA4F1880700C00D90BEE /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		DC4CEA571880700C00D90BEE /* panelappTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "panelappTests-Info.plist"; sourceTree = "<group>"; };
+		DC4CEA591880700C00D90BEE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DC4CEA5B1880700C00D90BEE /* panelappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = panelappTests.m; sourceTree = "<group>"; };
+		DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSettingsViewController.h; sourceTree = "<group>"; };
+		DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelSettingsViewController.m; sourceTree = "<group>"; };
+		DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PanelSettingsViewController.xib; sourceTree = "<group>"; };
+		DC4CEA6B1880727500D90BEE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		DC4CEA6D1880728100D90BEE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		DCCC76CB188F094D00495880 /* PanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSdk.h; sourceTree = "<group>"; };
+		DCCC76CC188F094D00495880 /* PanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelSdk.m; sourceTree = "<group>"; };
+		DCCC76CE188F130200495880 /* tap.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tap.aif; sourceTree = "<group>"; };
+		DCCC76CF188F144100495880 /* NSURLRequestExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLRequestExt.h; sourceTree = "<group>"; };
+		DCCC76D2188F154E00495880 /* AppUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtils.h; path = ../panelapp/AppUtils.h; sourceTree = "<group>"; };
+		DCCC76D3188F154E00495880 /* AppUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtils.m; path = ../panelapp/AppUtils.m; sourceTree = "<group>"; };
+		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DC4CEA2A1880700C00D90BEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */,
+				DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */,
+				DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */,
+				DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */,
+				DC4CEA331880700C00D90BEE /* CoreGraphics.framework in Frameworks */,
+				DC4CEA351880700C00D90BEE /* UIKit.framework in Frameworks */,
+				DC4CEA311880700C00D90BEE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC4CEA4B1880700C00D90BEE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC4CEA501880700C00D90BEE /* XCTest.framework in Frameworks */,
+				DC4CEA521880700C00D90BEE /* UIKit.framework in Frameworks */,
+				DC4CEA511880700C00D90BEE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DC4CEA241880700C00D90BEE = {
+			isa = PBXGroup;
+			children = (
+				DC4CEA651880705A00D90BEE /* panelsdk */,
+				DC4CEA361880700C00D90BEE /* panelapp */,
+				DC4CEA551880700C00D90BEE /* panelappTests */,
+				DC4CEA2F1880700C00D90BEE /* Frameworks */,
+				DC4CEA2E1880700C00D90BEE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DC4CEA2E1880700C00D90BEE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DC4CEA2D1880700C00D90BEE /* panelapp.app */,
+				DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DC4CEA2F1880700C00D90BEE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */,
+				DC4CEA6F1880728900D90BEE /* CoreMotion.framework */,
+				DC4CEA6D1880728100D90BEE /* CoreLocation.framework */,
+				DC4CEA6B1880727500D90BEE /* Accounts.framework */,
+				DC4CEA301880700C00D90BEE /* Foundation.framework */,
+				DC4CEA321880700C00D90BEE /* CoreGraphics.framework */,
+				DC4CEA341880700C00D90BEE /* UIKit.framework */,
+				DC4CEA4F1880700C00D90BEE /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DC4CEA361880700C00D90BEE /* panelapp */ = {
+			isa = PBXGroup;
+			children = (
+				DCCC76CE188F130200495880 /* tap.aif */,
+				DC4CEA3F1880700C00D90BEE /* AppDelegate.h */,
+				DC4CEA401880700C00D90BEE /* AppDelegate.m */,
+				DC4CEA421880700C00D90BEE /* Main.storyboard */,
+				DC4CEA451880700C00D90BEE /* ViewController.h */,
+				DC4CEA461880700C00D90BEE /* ViewController.m */,
+				DC4CEA481880700C00D90BEE /* Images.xcassets */,
+				DC4CEA371880700C00D90BEE /* Supporting Files */,
+			);
+			path = panelapp;
+			sourceTree = "<group>";
+		};
+		DC4CEA371880700C00D90BEE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC4CEA381880700C00D90BEE /* panelapp-Info.plist */,
+				DC4CEA391880700C00D90BEE /* InfoPlist.strings */,
+				DC4CEA3C1880700C00D90BEE /* main.m */,
+				DC4CEA3E1880700C00D90BEE /* panelapp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DC4CEA551880700C00D90BEE /* panelappTests */ = {
+			isa = PBXGroup;
+			children = (
+				DC4CEA5B1880700C00D90BEE /* panelappTests.m */,
+				DC4CEA561880700C00D90BEE /* Supporting Files */,
+			);
+			path = panelappTests;
+			sourceTree = "<group>";
+		};
+		DC4CEA561880700C00D90BEE /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DC4CEA571880700C00D90BEE /* panelappTests-Info.plist */,
+				DC4CEA581880700C00D90BEE /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DC4CEA651880705A00D90BEE /* panelsdk */ = {
+			isa = PBXGroup;
+			children = (
+				DCCC76D2188F154E00495880 /* AppUtils.h */,
+				DCCC76D3188F154E00495880 /* AppUtils.m */,
+				DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */,
+				DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */,
+				DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */,
+				DCCC76CB188F094D00495880 /* PanelSdk.h */,
+				DCCC76CC188F094D00495880 /* PanelSdk.m */,
+				DCCC76CF188F144100495880 /* NSURLRequestExt.h */,
+			);
+			path = panelsdk;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DC4CEA2C1880700C00D90BEE /* panelapp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC4CEA5F1880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelapp" */;
+			buildPhases = (
+				DC4CEA291880700C00D90BEE /* Sources */,
+				DC4CEA2A1880700C00D90BEE /* Frameworks */,
+				DC4CEA2B1880700C00D90BEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = panelapp;
+			productName = panelapp;
+			productReference = DC4CEA2D1880700C00D90BEE /* panelapp.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DC4CEA4D1880700C00D90BEE /* panelappTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC4CEA621880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelappTests" */;
+			buildPhases = (
+				DC4CEA4A1880700C00D90BEE /* Sources */,
+				DC4CEA4B1880700C00D90BEE /* Frameworks */,
+				DC4CEA4C1880700C00D90BEE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DC4CEA541880700C00D90BEE /* PBXTargetDependency */,
+			);
+			name = panelappTests;
+			productName = panelappTests;
+			productReference = DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DC4CEA251880700C00D90BEE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = "xAd Inc";
+				TargetAttributes = {
+					DC4CEA4D1880700C00D90BEE = {
+						TestTargetID = DC4CEA2C1880700C00D90BEE;
+					};
+				};
+			};
+			buildConfigurationList = DC4CEA281880700C00D90BEE /* Build configuration list for PBXProject "panelapp" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DC4CEA241880700C00D90BEE;
+			productRefGroup = DC4CEA2E1880700C00D90BEE /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DC4CEA2C1880700C00D90BEE /* panelapp */,
+				DC4CEA4D1880700C00D90BEE /* panelappTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DC4CEA2B1880700C00D90BEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */,
+				DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */,
+				DC4CEA3B1880700C00D90BEE /* InfoPlist.strings in Resources */,
+				DC4CEA441880700C00D90BEE /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC4CEA4C1880700C00D90BEE /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC4CEA5A1880700C00D90BEE /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DC4CEA291880700C00D90BEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */,
+				DCCC76D4188F154E00495880 /* AppUtils.m in Sources */,
+				DC4CEA471880700C00D90BEE /* ViewController.m in Sources */,
+				DC4CEA411880700C00D90BEE /* AppDelegate.m in Sources */,
+				DC4CEA3D1880700C00D90BEE /* main.m in Sources */,
+				DCCC76CD188F094D00495880 /* PanelSdk.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DC4CEA4A1880700C00D90BEE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DC4CEA5C1880700C00D90BEE /* panelappTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DC4CEA541880700C00D90BEE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DC4CEA2C1880700C00D90BEE /* panelapp */;
+			targetProxy = DC4CEA531880700C00D90BEE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		DC4CEA391880700C00D90BEE /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC4CEA3A1880700C00D90BEE /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DC4CEA421880700C00D90BEE /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC4CEA431880700C00D90BEE /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		DC4CEA581880700C00D90BEE /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DC4CEA591880700C00D90BEE /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DC4CEA5D1880700C00D90BEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		DC4CEA5E1880700C00D90BEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DC4CEA601880700C00D90BEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
+				INFOPLIST_FILE = "panelapp/panelapp-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		DC4CEA611880700C00D90BEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
+				INFOPLIST_FILE = "panelapp/panelapp-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		DC4CEA631880700C00D90BEE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/panelapp.app/panelapp";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "panelappTests/panelappTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		DC4CEA641880700C00D90BEE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/panelapp.app/panelapp";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
+				INFOPLIST_FILE = "panelappTests/panelappTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DC4CEA281880700C00D90BEE /* Build configuration list for PBXProject "panelapp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC4CEA5D1880700C00D90BEE /* Debug */,
+				DC4CEA5E1880700C00D90BEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC4CEA5F1880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelapp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC4CEA601880700C00D90BEE /* Debug */,
+				DC4CEA611880700C00D90BEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DC4CEA621880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelappTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DC4CEA631880700C00D90BEE /* Debug */,
+				DC4CEA641880700C00D90BEE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DC4CEA251880700C00D90BEE /* Project object */;
+}

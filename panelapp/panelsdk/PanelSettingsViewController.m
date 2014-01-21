@@ -13,6 +13,7 @@
     @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirth;
     @property (weak, nonatomic) IBOutlet UISwitch *shareFacebook;
     @property (weak, nonatomic) IBOutlet UISwitch *shareLocation;
+    @property (weak, nonatomic) IBOutlet UISegmentedControl *gender;
 
     @property (weak, nonatomic) IBOutlet UILabel *labelTitle;
     @property (weak, nonatomic) IBOutlet UILabel *labelDOB;
@@ -42,7 +43,7 @@
     [PanelSdk setDateOfBirth: self.dateOfBirth.date];
     [PanelSdk setSharefb: self.shareFacebook.on];
     [PanelSdk setShareloc: self.shareLocation.on];
-    
+    [PanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? @"m" : @"f"];
     [self dismissViewControllerAnimated:YES completion: nil];
 }
 
@@ -55,6 +56,8 @@
     self.dateOfBirth.date = [PanelSdk dateOfBirth];
     self.shareFacebook.on = [PanelSdk sharefb];
     self.shareLocation.on = [PanelSdk shareloc];
+    
+    self.gender.selectedSegmentIndex = [[PanelSdk gender] isEqualToString:@"m"] ? 0 : 1;
 }
 
 - (void)didReceiveMemoryWarning

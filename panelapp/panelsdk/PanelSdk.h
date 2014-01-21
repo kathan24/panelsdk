@@ -24,6 +24,10 @@
 + (BOOL) shareloc;
 + (void) setShareloc:(BOOL)value;
     
-    
-    
++ (NSString*) gender;
++ (void) setGender:(NSString*)value;
+
++ (NSString*) facebookId;
++ (void) setFacebookId:(NSString *)value;
+
 @end

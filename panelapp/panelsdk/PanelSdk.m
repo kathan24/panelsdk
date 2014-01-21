@@ -7,15 +7,21 @@
 //
 
 #import "PanelSdk.h"
+
+#import <Social/Social.h>
+#import <Accounts/Accounts.h>
 #import <CoreLocation/CoreLocation.h>
 #import <CoreMotion/CoreMotion.h>
+
 #import "NSURLRequestExt.h"
 #import "AppUtils.h"
+
 
 @interface PanelSdk ()
     @property (strong, nonatomic)  NSTimer *pulseTimer;
     @property (strong, nonatomic) CLLocation *cachedLocation;
     @property (strong, nonatomic) CLLocationManager *locationManager;
+    @property (nonatomic, strong) ACAccount * facebookAccount;
 @end
 
 
@@ -41,7 +47,14 @@
     PanelSdk *obj = [PanelSdk sharedInstance];
     
     if (obj) {
-        NSDictionary *defaults = @{@"dob": [NSDate date], @"sharefb":@NO, @"shareloc":@NO };
+        NSDictionary *defaults = @{
+                                   @"dob": [NSDate date],
+                                   @"sharefb":@NO,
+                                   @"shareloc":@NO,
+                                   @"gender":@"m",
+                                   @"fbid":@""
+                                   };
+        
         [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
     }
 }
@@ -61,6 +74,8 @@
         
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
         [self.locationManager startMonitoringSignificantLocationChanges];
+        
+        [self facebookLogin];
     }
     
     return self;
@@ -138,6 +153,9 @@
 }
 */
     
+    
+#pragma mark - Data Transmit
+
 - (void) transmitData {
     
     NSLog(@"transmitData");
@@ -150,10 +168,11 @@
     NSDictionary *params = @{
                              @"app": [AppUtils applicationName],
                              @"idfa": [AppUtils advertisingIdentifier],
-                             @"fbid": @"",
-                             @"dob": [PanelSdk dateOfBirth],
+                             @"fbid": [PanelSdk facebookId],
+                             @"dob": [AppUtils stringFromTime: [PanelSdk dateOfBirth]],
                              @"lat": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.latitude],
                              @"lon": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.longitude],
+                             @"gender": [PanelSdk gender]
                              };
     
     
@@ -198,10 +217,64 @@
 }
     
     
+#pragma mark - Facebook
+    
+- (void) facebookLogin {
+    
+    NSLog(@"facebookLogin");
+    [PanelSdk setFacebookId: @"" ];
+    
+    ACAccountStore *accountStore = [[ACAccountStore alloc] init] ;
+    ACAccountType *facebookAccountType = [accountStore accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierFacebook];
+    
+    NSArray * permissions = @[@"email"];
+    
+    NSDictionary *options = @{   ACFacebookAppIdKey : @"1418228921754388",
+                                 ACFacebookAudienceKey : ACFacebookAudienceFriends,
+                                 ACFacebookPermissionsKey : permissions};
+    
+    [accountStore requestAccessToAccountsWithType: facebookAccountType options: options completion:^(BOOL granted, NSError *error) {
+        
+        NSLog(@"facebookLogin - callback");
+        
+        if (!granted) {
+            NSLog(@"Error code: %ld - %@", (long)error.code, error.localizedDescription);
+            
+            switch (error.code) {
+                case ACErrorAccountNotFound:
+                    NSLog(@"%@", @"Account not found. Please setup your account in settings app.");
+                    break;
+                
+                case ACErrorPermissionDenied:
+                    NSLog(@"%@", @"You must grant access for all social features");
+                    break;
+                
+                default:
+                    NSLog(@"%@", error.localizedDescription);
+                    break;
+            }
+            
+            return;
+        }
+        
+        NSArray *accounts = [accountStore accountsWithAccountType: facebookAccountType];
+        
+        if([accounts count] == 0) {
+            NSLog(@"%@", @"Unable to find any facebook accounts.");
+            return;
+        }
+        
+        self.facebookAccount = [accounts lastObject];
+        [PanelSdk setFacebookId: self.facebookAccount.identifier ];
+        
+        NSLog(@"facebookLogin: %@", self.facebookAccount.identifier);
+    }];
+    
+}
     
     
 #pragma mark - Application Settings
-                       
+    
 + (NSDate*) dateOfBirth {
     return [[NSUserDefaults standardUserDefaults] objectForKey:@"dob"];
 }
@@ -229,6 +302,23 @@
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool: value] forKey:@"shareloc"];
 }
     
-
++ (NSString*) gender {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"gender"];
+}
+    
++ (void) setGender:(NSString *)value {
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"gender"];
+}
+    
+    
++ (NSString*) facebookId {
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"fbid"];
+}
+    
++ (void) setFacebookId:(NSString *)value {
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"fbid"];
+}
+    
+    
     
 @end

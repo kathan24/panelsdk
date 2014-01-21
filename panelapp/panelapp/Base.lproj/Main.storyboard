@@ -20,7 +20,7 @@
                                 <rect key="frame" x="0.0" y="35" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                 <items>
-                                    <navigationItem title="Panel Application" id="pab-uv-Urp">
+                                    <navigationItem title="The Panel" id="pab-uv-Urp">
                                         <barButtonItem key="rightBarButtonItem" style="plain" systemItem="compose" id="1OW-og-vmt">
                                             <connections>
                                                 <action selector="onSettingsTapped:" destination="vXZ-lx-hvc" id="4Oo-zj-7ia"/>

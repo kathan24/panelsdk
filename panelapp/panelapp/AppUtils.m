@@ -96,7 +96,16 @@
 
     
     
-    
++ (NSString*) stringFromTime:(NSDate*)date
+{
+    NSLocale *curLocale = [NSLocale currentLocale];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setLocale:curLocale];
+        
+    return [dateFormatter stringFromDate:date];
+}
     
     
     

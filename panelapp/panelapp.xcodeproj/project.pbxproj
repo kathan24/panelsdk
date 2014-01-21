@@ -30,6 +30,7 @@
 		DCCC76D4188F154E00495880 /* AppUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76D3188F154E00495880 /* AppUtils.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
 		DCCC76D7188F1B7800495880 /* tap.aif in Resources */ = {isa = PBXBuildFile; fileRef = DCCC76CE188F130200495880 /* tap.aif */; };
+		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,7 @@
 		DCCC76D2188F154E00495880 /* AppUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtils.h; path = ../panelapp/AppUtils.h; sourceTree = "<group>"; };
 		DCCC76D3188F154E00495880 /* AppUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtils.m; path = ../panelapp/AppUtils.m; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,10 +84,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */,
+				DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */,
 				DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */,
 				DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */,
 				DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */,
-				DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */,
 				DC4CEA331880700C00D90BEE /* CoreGraphics.framework in Frameworks */,
 				DC4CEA351880700C00D90BEE /* UIKit.framework in Frameworks */,
 				DC4CEA311880700C00D90BEE /* Foundation.framework in Frameworks */,
@@ -128,6 +131,7 @@
 		DC4CEA2F1880700C00D90BEE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DCCC76D8188F27DD00495880 /* Social.framework */,
 				DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */,
 				DC4CEA6F1880728900D90BEE /* CoreMotion.framework */,
 				DC4CEA6D1880728100D90BEE /* CoreLocation.framework */,

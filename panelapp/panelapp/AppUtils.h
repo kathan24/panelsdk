@@ -19,7 +19,7 @@
 + (id) deviceLanguage;
 + (id) advertisingIdentifier;
 + (id) isDoNotTrackEnabled;
-
++ (NSString*) stringFromTime:(NSDate*)date;
 
     
 @end

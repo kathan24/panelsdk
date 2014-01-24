@@ -1,6 +1,6 @@
 //
 //  PanelSdk.m
-//  panelapp
+//  xAd Panel SDK
 //
 //  Created by Stephen Anderson on 1/21/14.
 //  Copyright (c) 2014 xAd Inc. All rights reserved.
@@ -12,16 +12,24 @@
 #import <Accounts/Accounts.h>
 #import <CoreLocation/CoreLocation.h>
 #import <CoreMotion/CoreMotion.h>
+#import <AdSupport/ASIdentifierManager.h>
 
-#import "NSURLRequestExt.h"
-#import "AppUtils.h"
+static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 
+@interface NSURLRequest (Extension)
+    + (BOOL)allowsAnyHTTPSCertificateForHost:(NSString*)host;
+    + (void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString*)host;
+@end
 
 @interface PanelSdk ()
     @property (strong, nonatomic)  NSTimer *pulseTimer;
     @property (strong, nonatomic) CLLocation *cachedLocation;
     @property (strong, nonatomic) CLLocationManager *locationManager;
     @property (nonatomic, strong) ACAccount * facebookAccount;
+
+    + (NSString*) facebookId;
+    + (void) setFacebookId:(NSString *)value;
+
 @end
 
 
@@ -66,7 +74,12 @@
     
     if (self) {
         
+        UIApplication *app = [UIApplication sharedApplication];
+        UIBackgroundTaskIdentifier bgTask = 0;
+        bgTask = [app beginBackgroundTaskWithExpirationHandler:^{ [app endBackgroundTask: bgTask]; }];
+        
         self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(onTimerExpired:) userInfo:nil repeats:YES];
+        
         self.cachedLocation = [[CLLocation alloc] initWithLatitude:40.780184 longitude:-73.966827];
         
         self.locationManager = [[CLLocationManager alloc] init];
@@ -162,21 +175,22 @@
     
     NSURL *resourceUrl = nil;
 
-    resourceUrl = [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
+    //resourceUrl = [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
+    resourceUrl = [NSURL URLWithString:@"https://ec2-54-243-190-4.compute-1.amazonaws.com/rest/panel"];
     
     
     NSDictionary *params = @{
-                             @"app": [AppUtils applicationName],
-                             @"idfa": [AppUtils advertisingIdentifier],
+                             @"app": [PanelSdk applicationName],
+                             @"idfa": [PanelSdk advertisingIdentifier],
                              @"fbid": [PanelSdk facebookId],
-                             @"dob": [AppUtils stringFromTime: [PanelSdk dateOfBirth]],
+                             @"dob": [PanelSdk stringFromTime: [PanelSdk dateOfBirth]],
                              @"lat": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.latitude],
                              @"lon": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.longitude],
                              @"gender": [PanelSdk gender]
                              };
     
     
-    id httpRequest = [AppUtils createRequestWithUrl:resourceUrl andParameters:params];
+    id httpRequest = [PanelSdk createRequestWithUrl:resourceUrl andParameters:params];
     
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[resourceUrl host]];
     
@@ -229,7 +243,7 @@
     
     NSArray * permissions = @[@"email"];
     
-    NSDictionary *options = @{   ACFacebookAppIdKey : @"1418228921754388",
+    NSDictionary *options = @{   ACFacebookAppIdKey : FACEBOOK_APP_ID_XAD_PANEL,
                                  ACFacebookAudienceKey : ACFacebookAudienceFriends,
                                  ACFacebookPermissionsKey : permissions};
     
@@ -319,6 +333,101 @@
     [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"fbid"];
 }
     
+#pragma mark - Private utility methods
+
++ (NSString*) toUrlEncoded:(NSDictionary*)fields
+{
+    NSMutableArray *urlParams = [NSMutableArray array];
     
+    NSArray *keys = [fields allKeys];
+    for (id key in keys)
+    {
+        id value = [fields objectForKey:key];
+        
+        // Lets check if it is an array - used for listing ids.
+        if ([value isKindOfClass:[NSArray class]]) {
+            
+            for (id singleValue in value) {
+                // Same key, but with repeats
+                id pair = [NSString stringWithFormat:@"%@=%@", key, singleValue];
+                
+                [urlParams addObject:pair];
+            }
+            
+        } else {
+            // Lets encode only string parameters
+            if ([value isKindOfClass:[NSString class]]) {
+                value = [value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            } else if ([value isKindOfClass:[NSNumber class]]) {
+                value = [value stringValue];
+            }
+            
+            id pair = [NSString stringWithFormat:@"%@=%@", key, value];
+            
+            [urlParams addObject:pair];
+        }
+    }
     
+    return [urlParams componentsJoinedByString:@"&"];
+}
+
+
++ (NSMutableURLRequest*) createRequestWithUrl:(NSURL *)resourceUrl andParameters:(NSDictionary *)params {
+    
+    id payload = [PanelSdk toUrlEncoded:params];
+    NSLog(@"%@", payload);
+    
+    NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] initWithURL:resourceUrl];
+    [httpRequest setTimeoutInterval:9];
+    
+    [httpRequest setHTTPMethod:@"POST"];
+    [httpRequest setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-type"];
+    [httpRequest setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[payload length]] forHTTPHeaderField:@"Content-length"];
+    [httpRequest setHTTPBody:[payload dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    return httpRequest;
+}
+
+
+
+
+
++ (id) applicationName {
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
+}
+
+
++ (id) applicationVersion {
+    return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleVersion"];
+}
+
+
++ (id) deviceLanguage {
+    return [[NSLocale preferredLanguages] objectAtIndex:0];
+}
+
+
++ (id) advertisingIdentifier {
+    return [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+}
+
+
++ (id) isDoNotTrackEnabled {
+    return [[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled] ? @"0" : @"1";
+}
+
+
+
++ (NSString*) stringFromTime:(NSDate*)date
+{
+    NSLocale *curLocale = [NSLocale currentLocale];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setLocale:curLocale];
+    
+    return [dateFormatter stringFromDate:date];
+}
+
+
 @end

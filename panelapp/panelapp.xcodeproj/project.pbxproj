@@ -27,7 +27,6 @@
 		DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6D1880728100D90BEE /* CoreLocation.framework */; };
 		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
 		DCCC76CD188F094D00495880 /* PanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* PanelSdk.m */; };
-		DCCC76D4188F154E00495880 /* AppUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76D3188F154E00495880 /* AppUtils.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
 		DCCC76D7188F1B7800495880 /* tap.aif in Resources */ = {isa = PBXBuildFile; fileRef = DCCC76CE188F130200495880 /* tap.aif */; };
 		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
@@ -63,18 +62,15 @@
 		DC4CEA571880700C00D90BEE /* panelappTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "panelappTests-Info.plist"; sourceTree = "<group>"; };
 		DC4CEA591880700C00D90BEE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DC4CEA5B1880700C00D90BEE /* panelappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = panelappTests.m; sourceTree = "<group>"; };
-		DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSettingsViewController.h; sourceTree = "<group>"; };
-		DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelSettingsViewController.m; sourceTree = "<group>"; };
-		DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PanelSettingsViewController.xib; sourceTree = "<group>"; };
+		DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelSettingsViewController.h; path = ../panelsdk/PanelSettingsViewController.h; sourceTree = "<group>"; };
+		DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PanelSettingsViewController.m; path = ../panelsdk/PanelSettingsViewController.m; sourceTree = "<group>"; };
+		DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelSettingsViewController.xib; path = ../panelsdk/PanelSettingsViewController.xib; sourceTree = "<group>"; };
 		DC4CEA6B1880727500D90BEE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		DC4CEA6D1880728100D90BEE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		DCCC76CB188F094D00495880 /* PanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSdk.h; sourceTree = "<group>"; };
 		DCCC76CC188F094D00495880 /* PanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelSdk.m; sourceTree = "<group>"; };
 		DCCC76CE188F130200495880 /* tap.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tap.aif; sourceTree = "<group>"; };
-		DCCC76CF188F144100495880 /* NSURLRequestExt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSURLRequestExt.h; sourceTree = "<group>"; };
-		DCCC76D2188F154E00495880 /* AppUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppUtils.h; path = ../panelapp/AppUtils.h; sourceTree = "<group>"; };
-		DCCC76D3188F154E00495880 /* AppUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppUtils.m; path = ../panelapp/AppUtils.m; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -153,6 +149,9 @@
 				DC4CEA421880700C00D90BEE /* Main.storyboard */,
 				DC4CEA451880700C00D90BEE /* ViewController.h */,
 				DC4CEA461880700C00D90BEE /* ViewController.m */,
+				DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */,
+				DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */,
+				DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */,
 				DC4CEA481880700C00D90BEE /* Images.xcassets */,
 				DC4CEA371880700C00D90BEE /* Supporting Files */,
 			);
@@ -191,14 +190,8 @@
 		DC4CEA651880705A00D90BEE /* panelsdk */ = {
 			isa = PBXGroup;
 			children = (
-				DCCC76D2188F154E00495880 /* AppUtils.h */,
-				DCCC76D3188F154E00495880 /* AppUtils.m */,
-				DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */,
-				DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */,
-				DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */,
 				DCCC76CB188F094D00495880 /* PanelSdk.h */,
 				DCCC76CC188F094D00495880 /* PanelSdk.m */,
-				DCCC76CF188F144100495880 /* NSURLRequestExt.h */,
 			);
 			path = panelsdk;
 			sourceTree = "<group>";
@@ -303,7 +296,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */,
-				DCCC76D4188F154E00495880 /* AppUtils.m in Sources */,
 				DC4CEA471880700C00D90BEE /* ViewController.m in Sources */,
 				DC4CEA411880700C00D90BEE /* AppDelegate.m in Sources */,
 				DC4CEA3D1880700C00D90BEE /* main.m in Sources */,

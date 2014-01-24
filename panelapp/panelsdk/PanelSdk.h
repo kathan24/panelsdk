@@ -1,6 +1,6 @@
 //
 //  PanelSdk.h
-//  panelapp
+//  xAd Panel SDK
 //
 //  Created by Stephen Anderson on 1/21/14.
 //  Copyright (c) 2014 xAd Inc. All rights reserved.
@@ -12,8 +12,6 @@
 @interface PanelSdk : NSObject <CLLocationManagerDelegate>
 
 + (void) initialize;
-    
-    
     
 + (NSDate*) dateOfBirth;
 + (void) setDateOfBirth:(NSDate*)value;
@@ -27,7 +25,5 @@
 + (NSString*) gender;
 + (void) setGender:(NSString*)value;
 
-+ (NSString*) facebookId;
-+ (void) setFacebookId:(NSString *)value;
 
 @end

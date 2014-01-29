@@ -7,7 +7,7 @@
 //
 
 #import "PanelSettingsViewController.h"
-#import "PanelSdk.h"
+#import "xAdPanelSdk.h"
 
 @interface PanelSettingsViewController ()
     @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirth;
@@ -40,10 +40,10 @@
     
 - (IBAction)onDoneTapped:(id)sender {
     
-    [PanelSdk setDateOfBirth: self.dateOfBirth.date];
-    [PanelSdk setSharefb: self.shareFacebook.on];
-    [PanelSdk setShareloc: self.shareLocation.on];
-    [PanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? @"m" : @"f"];
+    [xAdPanelSdk setDateOfBirth: self.dateOfBirth.date];
+    [xAdPanelSdk setSharefb: self.shareFacebook.on];
+    [xAdPanelSdk setShareloc: self.shareLocation.on];
+    [xAdPanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? @"m" : @"f"];
     [self dismissViewControllerAnimated:YES completion: nil];
 }
 
@@ -53,11 +53,11 @@
 {
     [super viewDidLoad];
 
-    self.dateOfBirth.date = [PanelSdk dateOfBirth];
-    self.shareFacebook.on = [PanelSdk sharefb];
-    self.shareLocation.on = [PanelSdk shareloc];
+    self.dateOfBirth.date = [xAdPanelSdk dateOfBirth];
+    self.shareFacebook.on = [xAdPanelSdk sharefb];
+    self.shareLocation.on = [xAdPanelSdk shareloc];
     
-    self.gender.selectedSegmentIndex = [[PanelSdk gender] isEqualToString:@"m"] ? 0 : 1;
+    self.gender.selectedSegmentIndex = [[xAdPanelSdk gender] isEqualToString:@"m"] ? 0 : 1;
 }
 
 - (void)didReceiveMemoryWarning

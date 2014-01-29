@@ -1,5 +1,5 @@
 //
-//  PanelSdk.h
+//  xAdPanelSdk.h
 //  xAd Panel SDK
 //
 //  Created by Stephen Anderson on 1/21/14.
@@ -9,7 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-@interface PanelSdk : NSObject <CLLocationManagerDelegate>
+UIKIT_EXTERN NSString * const XAD_NOTIFICATION_DATA_TRANSMITTED;
+UIKIT_EXTERN NSString * const XAD_NOTIFICATION_ACTIVITY_DETECTED;
+
+
+@interface xAdPanelSdk : NSObject <CLLocationManagerDelegate>
 
 + (void) initialize;
     

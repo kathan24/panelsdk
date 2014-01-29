@@ -7,14 +7,14 @@
 //
 
 #import "AppDelegate.h"
-#import "PanelSdk.h"
+#import "xAdPanelSdk.h"
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
-    [PanelSdk initialize];
+    [xAdPanelSdk initialize];
     
     
     // Override point for customization after application launch.

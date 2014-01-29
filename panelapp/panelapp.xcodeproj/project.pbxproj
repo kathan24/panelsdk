@@ -26,7 +26,7 @@
 		DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6B1880727500D90BEE /* Accounts.framework */; };
 		DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6D1880728100D90BEE /* CoreLocation.framework */; };
 		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
-		DCCC76CD188F094D00495880 /* PanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* PanelSdk.m */; };
+		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
 		DCCC76D7188F1B7800495880 /* tap.aif in Resources */ = {isa = PBXBuildFile; fileRef = DCCC76CE188F130200495880 /* tap.aif */; };
 		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
@@ -68,8 +68,8 @@
 		DC4CEA6B1880727500D90BEE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		DC4CEA6D1880728100D90BEE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
-		DCCC76CB188F094D00495880 /* PanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelSdk.h; sourceTree = "<group>"; };
-		DCCC76CC188F094D00495880 /* PanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PanelSdk.m; sourceTree = "<group>"; };
+		DCCC76CB188F094D00495880 /* xAdPanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSdk.h; sourceTree = "<group>"; };
+		DCCC76CC188F094D00495880 /* xAdPanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSdk.m; sourceTree = "<group>"; };
 		DCCC76CE188F130200495880 /* tap.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tap.aif; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
@@ -190,8 +190,8 @@
 		DC4CEA651880705A00D90BEE /* panelsdk */ = {
 			isa = PBXGroup;
 			children = (
-				DCCC76CB188F094D00495880 /* PanelSdk.h */,
-				DCCC76CC188F094D00495880 /* PanelSdk.m */,
+				DCCC76CB188F094D00495880 /* xAdPanelSdk.h */,
+				DCCC76CC188F094D00495880 /* xAdPanelSdk.m */,
 			);
 			path = panelsdk;
 			sourceTree = "<group>";
@@ -243,6 +243,9 @@
 				LastUpgradeCheck = 0500;
 				ORGANIZATIONNAME = "xAd Inc";
 				TargetAttributes = {
+					DC4CEA2C1880700C00D90BEE = {
+						DevelopmentTeam = RH7J8RUH8M;
+					};
 					DC4CEA4D1880700C00D90BEE = {
 						TestTargetID = DC4CEA2C1880700C00D90BEE;
 					};
@@ -299,7 +302,7 @@
 				DC4CEA471880700C00D90BEE /* ViewController.m in Sources */,
 				DC4CEA411880700C00D90BEE /* AppDelegate.m in Sources */,
 				DC4CEA3D1880700C00D90BEE /* main.m in Sources */,
-				DCCC76CD188F094D00495880 /* PanelSdk.m in Sources */,
+				DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -426,10 +429,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
 				INFOPLIST_FILE = "panelapp/panelapp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -439,10 +445,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
 				INFOPLIST_FILE = "panelapp/panelapp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

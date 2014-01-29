@@ -1,12 +1,12 @@
 //
-//  PanelSdk.m
+//  xAdPanelSdk.m
 //  xAd Panel SDK
 //
 //  Created by Stephen Anderson on 1/21/14.
 //  Copyright (c) 2014 xAd Inc. All rights reserved.
 //
 
-#import "PanelSdk.h"
+#import "xAdPanelSdk.h"
 
 #import <Social/Social.h>
 #import <Accounts/Accounts.h>
@@ -14,18 +14,34 @@
 #import <CoreMotion/CoreMotion.h>
 #import <AdSupport/ASIdentifierManager.h>
 
+typedef void(^ActivityUpdateBlock)(CMMotionActivity *activity);
+
+NSString * const XAD_NOTIFICATION_DATA_TRANSMITTED = @"XAD_DATA_TRANSMITTED";
+NSString * const XAD_NOTIFICATION_ACTIVITY_DETECTED = @"XAD_ACTIVITY_DETECTED";
+
+static NSString * const NOTIFICATION_DISTANCE_THRESHOLD_PASSED = @"XAD_PANEL_NOTIF_01";
+static NSString * const NOTIFICATION_NEW_LOCATION_DETECTED = @"XAD_PANEL_NOTIF_02";
+
 static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
+
+static NSTimeInterval TIME_THRESHOLD = 60;
+
+
 
 @interface NSURLRequest (Extension)
     + (BOOL)allowsAnyHTTPSCertificateForHost:(NSString*)host;
     + (void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString*)host;
 @end
 
-@interface PanelSdk ()
+@interface xAdPanelSdk ()
     @property (strong, nonatomic)  NSTimer *pulseTimer;
     @property (strong, nonatomic) CLLocation *cachedLocation;
     @property (strong, nonatomic) CLLocationManager *locationManager;
+    @property (strong, nonatomic) CMMotionActivityManager *activityManager;
     @property (nonatomic, strong) ACAccount * facebookAccount;
+
+    @property (nonatomic, assign) CLLocationDistance variableDistanceThreshold;
+    @property (nonatomic, assign) BOOL firstEmissionCompleted;
 
     + (NSString*) facebookId;
     + (void) setFacebookId:(NSString *)value;
@@ -33,11 +49,11 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 @end
 
 
-@implementation PanelSdk
+@implementation xAdPanelSdk
     
-+ (PanelSdk*) sharedInstance
++ (xAdPanelSdk*) sharedInstance
     {
-        static PanelSdk *singleton = nil;
+        static xAdPanelSdk *singleton = nil;
         
         @synchronized(self)
         {
@@ -45,14 +61,14 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
                 return singleton;
             }
             
-            singleton = [[PanelSdk alloc] init];
+            singleton = [[xAdPanelSdk alloc] init];
             return singleton;
         }
     }
     
     
 + (void) initialize {
-    PanelSdk *obj = [PanelSdk sharedInstance];
+    xAdPanelSdk *obj = [xAdPanelSdk sharedInstance];
     
     if (obj) {
         NSDictionary *defaults = @{
@@ -78,27 +94,97 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
         UIBackgroundTaskIdentifier bgTask = 0;
         bgTask = [app beginBackgroundTaskWithExpirationHandler:^{ [app endBackgroundTask: bgTask]; }];
         
-        self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(onTimerExpired:) userInfo:nil repeats:YES];
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        
+        [nc addObserver:self
+               selector: @selector(onDistanceThresholdPassed:)
+                   name: NOTIFICATION_DISTANCE_THRESHOLD_PASSED
+                 object: nil];
+        
+        self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: TIME_THRESHOLD target:self selector:@selector(onTimerExpired:) userInfo:nil repeats:YES];
         
         self.cachedLocation = [[CLLocation alloc] initWithLatitude:40.780184 longitude:-73.966827];
         
+        // TODO: Detect if the user did not enable location.
+        
+        self.variableDistanceThreshold = 100; // meters
+        self.firstEmissionCompleted = NO;
+        
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
-        
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
         [self.locationManager startMonitoringSignificantLocationChanges];
         
+        if ([CMMotionActivityManager isActivityAvailable]) {
+            
+            self.activityManager = [[CMMotionActivityManager alloc] init];
+            
+            [self.activityManager startActivityUpdatesToQueue:[[NSOperationQueue alloc] init]
+                                                    withHandler: ^(CMMotionActivity *activity) {
+                 
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     
+                     
+                     
+                     if ([activity walking]) {
+                         self.variableDistanceThreshold = 10;
+                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"walking"];
+                     }
+                     
+                     else if ([activity running]) {
+                         self.variableDistanceThreshold = 10;
+                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"running"];
+                     }
+                     
+                     else if ([activity automotive]) {
+                         self.variableDistanceThreshold = 100;
+                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"automotive"];
+                     }
+
+                     else if ([activity stationary]) {
+                         // indirect GPS stopping
+                         self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"stationary"];
+                     }
+                     
+                     else {
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"stationary"];
+                     }
+                     
+                 });
+             }];
+        
+        }
+
         [self facebookLogin];
     }
     
     return self;
 }
 
+
+
+
     
 -(void) onTimerExpired:(NSTimer *)timer {
+    
+    // Constant time
+    
+    //[self transmitData];
+}
+
+
+-(void)onDistanceThresholdPassed:(NSNotification*)notification {
+    
+    // Constant distance
+    
     [self transmitData];
 }
-    
+
+
     
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
@@ -117,57 +203,38 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
         CLLocationDistance distance = ([newLocation distanceFromLocation:oldLocation]) * 0.000621371192;
         
         // Added due to minor fluctuations of the location perhaps due to hand movements.
-        if (oldLocation && distance < .001) {
+        if (!self.firstEmissionCompleted && oldLocation && distance < .001) {
             return;
         }
         
-        NSLog(@"locationManager:didUpdateToLocation");
-        NSLog(@"Distance: %f miles",distance);
-        
-        NSLog(@"Location %@",newLocation);
-        
+        if (!self.firstEmissionCompleted || distance >= self.variableDistanceThreshold) {
+            [[NSNotificationCenter defaultCenter] postNotificationName: NOTIFICATION_DISTANCE_THRESHOLD_PASSED object: [NSNumber numberWithInt:distance]];
+        }
+
         self.cachedLocation = newLocation;
         
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"LOCATION" object:newLocation];
+        [[NSNotificationCenter defaultCenter] postNotificationName: NOTIFICATION_NEW_LOCATION_DETECTED object:newLocation];
     }
-    
-   
-    
-/*
-- (void) doTransmitData {
-    NSLog(@"Trasmitting data to xAd");
-    
-    NSString *post =[[NSString alloc] initWithFormat:@"userName=%@&password=%@",userName.text,password.text];
-    NSURL *url=[NSURL URLWithString:@"https://localhost:443/SSLLogin/Login.php"];
-    
-    NSLog(post);
-    NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    
-    NSString *postLength = [NSString stringWithFormat:@"%d", [postData length]];
-    
-    NSMutableURLRequest *request = [[[NSMutableURLRequest alloc] init] autorelease];
-    [request setURL:url];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
-    [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-    [request setHTTPBody:postData];
-    
-    //when we user https, we need to allow any HTTPS cerificates, so add the one line code,to tell teh NSURLRequest to accept any https certificate, i'm not sure about the security aspects
- 
-    
-    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[url host]];
-    
-    NSError *error;
-    NSURLResponse *response;
-    NSData *urlData=[NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    NSString *data=[[NSString alloc]initWithData:urlData encoding:NSUTF8StringEncoding];
-    NSLog(@"%@",data);
-}
-*/
-    
+
+
     
 #pragma mark - Data Transmit
+
+/*
+ 
+ Options
+ 
+ a) Constant time: Everytime an X amount of time elapses, we signal the server.
+ 
+ b) Constant distance: Everytime an X amount of distance is detected, we signal the server.
+ 
+ c) Density signaling: Signaling frequency changes based on store density where the user is located.
+    REST could return the 'local' distance threshold.
+ 
+    e.g. While in the city, distance threshold can be say 50meters, but in the desert it can be 20miles or 1hour which ever comes first.
+ 
+ */
+
 
 - (void) transmitData {
     
@@ -180,17 +247,17 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
     
     
     NSDictionary *params = @{
-                             @"app": [PanelSdk applicationName],
-                             @"idfa": [PanelSdk advertisingIdentifier],
-                             @"fbid": [PanelSdk facebookId],
-                             @"dob": [PanelSdk stringFromTime: [PanelSdk dateOfBirth]],
+                             @"app": [xAdPanelSdk applicationName],
+                             @"idfa": [xAdPanelSdk advertisingIdentifier],
+                             @"fbid": [xAdPanelSdk facebookId],
+                             @"dob": [xAdPanelSdk stringFromTime: [xAdPanelSdk dateOfBirth]],
                              @"lat": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.latitude],
                              @"lon": [NSString stringWithFormat:@"%f", self.cachedLocation.coordinate.longitude],
-                             @"gender": [PanelSdk gender]
+                             @"gender": [xAdPanelSdk gender]
                              };
     
     
-    id httpRequest = [PanelSdk createRequestWithUrl:resourceUrl andParameters:params];
+    id httpRequest = [xAdPanelSdk createRequestWithUrl:resourceUrl andParameters:params];
     
     [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[resourceUrl host]];
     
@@ -224,7 +291,8 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
                                
                                NSLog(@"REST Response: %@", txtResponse);
                                
-                               [[NSNotificationCenter defaultCenter] postNotificationName: @"TRANSMIT" object: nil];
+                               self.firstEmissionCompleted = YES;
+                               [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_DATA_TRANSMITTED object: nil];
                            }];
 
     
@@ -236,7 +304,7 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 - (void) facebookLogin {
     
     NSLog(@"facebookLogin");
-    [PanelSdk setFacebookId: @"" ];
+    [xAdPanelSdk setFacebookId: @"" ];
     
     ACAccountStore *accountStore = [[ACAccountStore alloc] init] ;
     ACAccountType *facebookAccountType = [accountStore accountTypeWithAccountTypeIdentifier: ACAccountTypeIdentifierFacebook];
@@ -279,7 +347,7 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
         }
         
         self.facebookAccount = [accounts lastObject];
-        [PanelSdk setFacebookId: self.facebookAccount.identifier ];
+        [xAdPanelSdk setFacebookId: self.facebookAccount.identifier ];
         
         NSLog(@"facebookLogin: %@", self.facebookAccount.identifier);
     }];
@@ -374,7 +442,7 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 
 + (NSMutableURLRequest*) createRequestWithUrl:(NSURL *)resourceUrl andParameters:(NSDictionary *)params {
     
-    id payload = [PanelSdk toUrlEncoded:params];
+    id payload = [xAdPanelSdk toUrlEncoded:params];
     NSLog(@"%@", payload);
     
     NSMutableURLRequest *httpRequest = [[NSMutableURLRequest alloc] initWithURL:resourceUrl];

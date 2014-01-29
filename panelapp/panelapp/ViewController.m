@@ -7,12 +7,14 @@
 //
 
 #import "ViewController.h"
+#import "xAdPanelSdk.h"
 #import "PanelSettingsViewController.h"
 #include <AudioToolbox/AudioToolbox.h>
 
 @interface ViewController ()
     @property (readwrite)	CFURLRef		soundFileURLRef;
     @property (readonly)	SystemSoundID	soundFileObject;
+    @property (weak, nonatomic) IBOutlet UILabel *activityLabel;
 @end
 
 @implementation ViewController
@@ -31,8 +33,15 @@
     
     [nc addObserver:self
            selector: @selector(onTrasmitCompleted:)
-               name: @"TRANSMIT"
+               name: XAD_NOTIFICATION_DATA_TRANSMITTED
              object: nil];
+    
+    
+    [nc addObserver:self
+           selector:@selector(onActivityDetected:)
+               name:XAD_NOTIFICATION_ACTIVITY_DETECTED
+             object:nil];
+    
 }
     
     
@@ -41,7 +50,15 @@
     AudioServicesPlaySystemSound (_soundFileObject);
 }
 
-    
+
+- (void) onActivityDetected:(NSNotification*)notification {
+    NSLog(@"onActivityDetected");
+   
+    self.activityLabel.text = notification.object;
+}
+
+
+
 
 - (void)didReceiveMemoryWarning
 {

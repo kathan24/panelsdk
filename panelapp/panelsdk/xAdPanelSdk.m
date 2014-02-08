@@ -123,13 +123,21 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                  dispatch_async(dispatch_get_main_queue(), ^{
 
                      if ([activity stationary]) {
+                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"Stationary"];
+
                          // Stopped moving, but give a 3 min in case of red lights, etc
-                         self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: STATIONARY_TIME_THRESHOLD target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
+                     
+                         if (!self.pulseTimer) {
+                             NSLog(@"Stationary: starting timer.");
+                             self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: STATIONARY_TIME_THRESHOLD target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
+                         }
                      } else if ([activity unknown]) {
-                         // do nothing
+                         NSLog(@"Unknown activity");
                      } else {
+                         NSLog(@"Activity: cancelling timer.");
                          // Activity detected. Cancel timer and adjust based on activity type.
                          [self.pulseTimer invalidate];
+                         self.pulseTimer = nil;
                          [self onActivityDetected: activity];
                      }
                      
@@ -147,7 +155,16 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
 
     
     
-+ (CLLocationDistance) sigmoidThresholdBySpeed:(CLLocationSpeed) speedKmPerHour {
++ (CLLocationDistance) sigmoidThresholdBySpeed:(CLLocationSpeed) speedMetersPerSec {
+    
+    NSLog(@"sigmoidThresholdBySpeed(%f)", speedMetersPerSec);
+    
+    if (speedMetersPerSec < 0.0) {
+        NSLog(@"Too slow!");
+        return 10.0;
+    }
+
+    double speedKmPerHour =  speedMetersPerSec * 3.6;
     
     // Sigmoid function
     
@@ -166,12 +183,14 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     
 - (void) onActivityDetected:(id)activity {
     
+    NSLog(@"onActivityDetected");
+
     // Re-activate the GPS,
 
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.variableDistanceThreshold = [xAdPanelSdk sigmoidThresholdBySpeed: self.cachedLocation.speed * 3.6];
+    self.variableDistanceThreshold = [xAdPanelSdk sigmoidThresholdBySpeed: self.cachedLocation.speed];
     
-    id activityName = @"Unknown";
+    id activityName = nil;
     
     if ([activity walking]) {
         activityName = @"Walking";
@@ -182,22 +201,26 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: activityName];
+    if (activityName) {
+        [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: activityName];
+    }
 }
 
 
 -(void) onUserIsStationary:(NSTimer *)timer {
+    
+    NSLog(@"onUserIsStationary");
     
     // User has been stationary for 3 min
     [self transmitData];
     
     // Now we can stop the GPS
     self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
-    [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"Stationary"];
 }
 
 
 -(void)onDistanceThresholdPassed:(NSNotification*)notification {
+    NSLog(@"onDistanceThresholdPassed");
     // User's activity resulted in a new location beyond the activity based threshold.
     [self transmitData];
 }
@@ -218,7 +241,7 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
         
         // Check accuracy
         
-        CLLocationDistance distance = ([newLocation distanceFromLocation:oldLocation]) * 0.000621371192;
+        CLLocationDistance distance = ([newLocation distanceFromLocation:oldLocation]);// * 0.000621371192;
         
         // Added due to minor fluctuations of the location perhaps due to hand movements.
         if (!self.firstEmissionCompleted && oldLocation && distance < .001) {

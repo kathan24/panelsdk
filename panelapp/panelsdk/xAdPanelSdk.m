@@ -24,8 +24,8 @@ static NSString * const NOTIFICATION_NEW_LOCATION_DETECTED = @"XAD_PANEL_NOTIF_0
 
 static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 
-static NSTimeInterval TIME_THRESHOLD = 60;
-
+static NSTimeInterval STATIONARY_TIME_THRESHOLD = 180; // 3 min
+static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
 
 
 @interface NSURLRequest (Extension)
@@ -72,11 +72,11 @@ static NSTimeInterval TIME_THRESHOLD = 60;
     
     if (obj) {
         NSDictionary *defaults = @{
-                                   @"dob": [NSDate date],
-                                   @"sharefb":@NO,
-                                   @"shareloc":@NO,
-                                   @"gender":@"m",
-                                   @"fbid":@""
+                                   @"xad_panel_dob": [NSDate date],
+                                   @"xad_panel_sharefb":@NO,
+                                   @"xad_panel_shareloc":@NO,
+                                   @"xad_panel_gender":@"m",
+                                   @"xad_panel_fbid":@""
                                    };
         
         [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
@@ -101,8 +101,6 @@ static NSTimeInterval TIME_THRESHOLD = 60;
                    name: NOTIFICATION_DISTANCE_THRESHOLD_PASSED
                  object: nil];
         
-        self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: TIME_THRESHOLD target:self selector:@selector(onTimerExpired:) userInfo:nil repeats:YES];
-        
         self.cachedLocation = [[CLLocation alloc] initWithLatitude:40.780184 longitude:-73.966827];
         
         // TODO: Detect if the user did not enable location.
@@ -123,36 +121,18 @@ static NSTimeInterval TIME_THRESHOLD = 60;
                                                     withHandler: ^(CMMotionActivity *activity) {
                  
                  dispatch_async(dispatch_get_main_queue(), ^{
-                     
-                     
-                     
-                     if ([activity walking]) {
-                         self.variableDistanceThreshold = 10;
-                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"walking"];
-                     }
-                     
-                     else if ([activity running]) {
-                         self.variableDistanceThreshold = 10;
-                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"running"];
-                     }
-                     
-                     else if ([activity automotive]) {
-                         self.variableDistanceThreshold = 100;
-                         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
-                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"automotive"];
-                     }
 
-                     else if ([activity stationary]) {
-                         // indirect GPS stopping
-                         self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
-                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"stationary"];
+                     if ([activity stationary]) {
+                         // Stopped moving, but give a 3 min in case of red lights, etc
+                         self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: STATIONARY_TIME_THRESHOLD target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
+                     } else if ([activity unknown]) {
+                         // do nothing
+                     } else {
+                         // Activity detected. Cancel timer and adjust based on activity type.
+                         [self.pulseTimer invalidate];
+                         [self onActivityDetected: activity];
                      }
                      
-                     else {
-                         [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"stationary"];
-                     }
                      
                  });
              }];
@@ -165,22 +145,60 @@ static NSTimeInterval TIME_THRESHOLD = 60;
     return self;
 }
 
+    
+    
++ (CLLocationDistance) sigmoidThresholdBySpeed:(CLLocationSpeed) speedKmPerHour {
+    
+    // Sigmoid function
+    
+    // Walking speed of 5 Km/h gives a 95m threshold
+    // Running speed of 20 Km/h gives a 330m threshold
+    // Car speed of 100 Km/h (62mph) gives a 1Km threshold
+    // Anything beyond is capped at 2Km
+    
+    double threshold = ((speedKmPerHour) / (100.0 + fabs((speedKmPerHour)))) * (2.0 * THRESHOLD_AT_100KPH);
+    
+    NSLog(@"Threshold(%f): %f", speedKmPerHour, threshold);
+    
+    return threshold;
+}
+    
+    
+- (void) onActivityDetected:(id)activity {
+    
+    // Re-activate the GPS,
+
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    self.variableDistanceThreshold = [xAdPanelSdk sigmoidThresholdBySpeed: self.cachedLocation.speed * 3.6];
+    
+    id activityName = @"Unknown";
+    
+    if ([activity walking]) {
+        activityName = @"Walking";
+    } else if ([activity running]) {
+        activityName = @"Running";
+    } else if ([activity automotive]) {
+        activityName = @"Automotive";
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: activityName];
+}
 
 
-
+-(void) onUserIsStationary:(NSTimer *)timer {
     
--(void) onTimerExpired:(NSTimer *)timer {
+    // User has been stationary for 3 min
+    [self transmitData];
     
-    // Constant time
-    
-    //[self transmitData];
+    // Now we can stop the GPS
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: @"Stationary"];
 }
 
 
 -(void)onDistanceThresholdPassed:(NSNotification*)notification {
-    
-    // Constant distance
-    
+    // User's activity resulted in a new location beyond the activity based threshold.
     [self transmitData];
 }
 
@@ -235,16 +253,27 @@ static NSTimeInterval TIME_THRESHOLD = 60;
  
  */
 
+#define SUPPORT_SSL
+    
++ (id) getWebServiceUrl {
+
+#if TARGET_IPHONE_SIMULATOR
+    return [NSURL URLWithString:@"http://ec2-54-243-190-3.compute-1.amazonaws.com/rest/panel"];
+#else
+    #ifdef SUPPORT_SSL
+        return [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
+    #else
+        return [NSURL URLWithString:@"http://ap.xad.com/rest/panel"];
+    #endif
+#endif
+}
+
 
 - (void) transmitData {
     
     NSLog(@"transmitData");
     
-    NSURL *resourceUrl = nil;
-
-    //resourceUrl = [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
-    resourceUrl = [NSURL URLWithString:@"https://ec2-54-243-190-4.compute-1.amazonaws.com/rest/panel"];
-    
+    NSURL *resourceUrl = [xAdPanelSdk getWebServiceUrl];
     
     NSDictionary *params = @{
                              @"app": [xAdPanelSdk applicationName],
@@ -358,47 +387,47 @@ static NSTimeInterval TIME_THRESHOLD = 60;
 #pragma mark - Application Settings
     
 + (NSDate*) dateOfBirth {
-    return [[NSUserDefaults standardUserDefaults] objectForKey:@"dob"];
+    return [[NSUserDefaults standardUserDefaults] objectForKey:@"xad_panel_dob"];
 }
     
     
 + (void) setDateOfBirth:(NSDate*)value {
-    [[NSUserDefaults standardUserDefaults] setObject: value forKey:@"dob"];
+    [[NSUserDefaults standardUserDefaults] setObject: value forKey:@"xad_panel_dob"];
 }
     
     
 + (BOOL) sharefb {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"sharefb"] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_sharefb"] boolValue];
 }
     
 + (void) setSharefb:(BOOL)value {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool: value] forKey:@"sharefb"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool: value] forKey:@"xad_panel_sharefb"];
 }
     
     
 + (BOOL) shareloc {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"shareloc"] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_shareloc"] boolValue];
 }
     
 + (void) setShareloc:(BOOL)value {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool: value] forKey:@"shareloc"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool: value] forKey:@"xad_panel_shareloc"];
 }
     
 + (NSString*) gender {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:@"gender"];
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_gender"];
 }
     
 + (void) setGender:(NSString *)value {
-    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"gender"];
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"xad_panel_gender"];
 }
     
     
 + (NSString*) facebookId {
-    return [[NSUserDefaults standardUserDefaults] stringForKey:@"fbid"];
+    return [[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_fbid"];
 }
     
 + (void) setFacebookId:(NSString *)value {
-    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"fbid"];
+    [[NSUserDefaults standardUserDefaults] setObject:value forKey:@"xad_panel_fbid"];
 }
     
 #pragma mark - Private utility methods

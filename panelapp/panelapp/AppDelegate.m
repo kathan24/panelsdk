@@ -13,11 +13,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     [xAdPanelSdk initialize];
-    
-    
-    // Override point for customization after application launch.
     return YES;
 }
 							

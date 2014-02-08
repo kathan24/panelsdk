@@ -24,8 +24,8 @@
     [super viewDidLoad];
     
 
-    NSURL *tapSound = [[NSBundle mainBundle] URLForResource: @"tap" withExtension: @"aif"];
-    _soundFileURLRef = (CFURLRef) CFBridgingRetain(tapSound);
+    NSURL *sonarSound = [[NSBundle mainBundle] URLForResource: @"sonar_ping" withExtension: @"aif"];
+    _soundFileURLRef = (CFURLRef) CFBridgingRetain(sonarSound);
 
     AudioServicesCreateSystemSoundID ( _soundFileURLRef, &_soundFileObject );
 	

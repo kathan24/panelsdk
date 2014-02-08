@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DC17B46418A6409D0025318F /* sonar_ping.aif in Resources */ = {isa = PBXBuildFile; fileRef = DC17B46318A63E860025318F /* sonar_ping.aif */; };
 		DC4CEA311880700C00D90BEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA301880700C00D90BEE /* Foundation.framework */; };
 		DC4CEA331880700C00D90BEE /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA321880700C00D90BEE /* CoreGraphics.framework */; };
 		DC4CEA351880700C00D90BEE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA341880700C00D90BEE /* UIKit.framework */; };
@@ -28,7 +29,6 @@
 		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
 		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
-		DCCC76D7188F1B7800495880 /* tap.aif in Resources */ = {isa = PBXBuildFile; fileRef = DCCC76CE188F130200495880 /* tap.aif */; };
 		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DC17B46318A63E860025318F /* sonar_ping.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = sonar_ping.aif; sourceTree = "<group>"; };
 		DC4CEA2D1880700C00D90BEE /* panelapp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = panelapp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC4CEA301880700C00D90BEE /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DC4CEA321880700C00D90BEE /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -70,7 +71,6 @@
 		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		DCCC76CB188F094D00495880 /* xAdPanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSdk.h; sourceTree = "<group>"; };
 		DCCC76CC188F094D00495880 /* xAdPanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSdk.m; sourceTree = "<group>"; };
-		DCCC76CE188F130200495880 /* tap.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = tap.aif; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -143,7 +143,7 @@
 		DC4CEA361880700C00D90BEE /* panelapp */ = {
 			isa = PBXGroup;
 			children = (
-				DCCC76CE188F130200495880 /* tap.aif */,
+				DC17B46318A63E860025318F /* sonar_ping.aif */,
 				DC4CEA3F1880700C00D90BEE /* AppDelegate.h */,
 				DC4CEA401880700C00D90BEE /* AppDelegate.m */,
 				DC4CEA421880700C00D90BEE /* Main.storyboard */,
@@ -275,7 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DCCC76D7188F1B7800495880 /* tap.aif in Resources */,
+				DC17B46418A6409D0025318F /* sonar_ping.aif in Resources */,
 				DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */,
 				DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */,
 				DC4CEA3B1880700C00D90BEE /* InfoPlist.strings in Resources */,

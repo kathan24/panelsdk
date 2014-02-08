@@ -131,14 +131,18 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                              NSLog(@"Stationary: starting timer.");
                              self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: STATIONARY_TIME_THRESHOLD target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
                          }
-                     } else if ([activity unknown]) {
-                         NSLog(@"Unknown activity");
-                     } else {
+                     } else if ([activity walking] || [activity running] || [activity automotive]) {
+                         
+                         NSArray* conf = @[@"Low", @"Med", @"High"];
+                         
+                         NSLog(@"Activity confidence: %@", [conf objectAtIndex:[activity confidence]]);
                          NSLog(@"Activity: cancelling timer.");
                          // Activity detected. Cancel timer and adjust based on activity type.
                          [self.pulseTimer invalidate];
                          self.pulseTimer = nil;
                          [self onActivityDetected: activity];
+                     } else {
+                         NSLog(@"Unknown activity");
                      }
                      
                      

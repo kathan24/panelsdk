@@ -10,11 +10,20 @@
 #import "xAdPanelSdk.h"
 #import "PanelSettingsViewController.h"
 #include <AudioToolbox/AudioToolbox.h>
+#include <CoreLocation/CoreLocation.h>
 
 @interface ViewController ()
     @property (readwrite)	CFURLRef		soundFileURLRef;
     @property (readonly)	SystemSoundID	soundFileObject;
     @property (weak, nonatomic) IBOutlet UILabel *activityLabel;
+
+    @property (weak, nonatomic) IBOutlet UILabel *labelC;
+    @property (weak, nonatomic) IBOutlet UILabel *labelB;
+    @property (weak, nonatomic) IBOutlet UILabel *labelA;
+    @property (weak, nonatomic) IBOutlet UILabel *labelD;
+@property (weak, nonatomic) IBOutlet UILabel *labelGeo;
+@property (weak, nonatomic) IBOutlet UILabel *labelAddress;
+
 @end
 
 @implementation ViewController
@@ -42,6 +51,30 @@
                name:XAD_NOTIFICATION_ACTIVITY_DETECTED
              object:nil];
     
+    [nc addObserver:self
+           selector:@selector(onSignalADetected:)
+               name:@"SIGNAL_A"
+             object:nil];
+    
+    [nc addObserver:self
+           selector:@selector(onSignalBDetected:)
+               name:@"SIGNAL_B"
+             object:nil];
+    
+    [nc addObserver:self
+           selector:@selector(onSignalCDetected:)
+               name:@"SIGNAL_C"
+             object:nil];
+    
+    [nc addObserver:self
+           selector:@selector(onSignalDDetected:)
+               name:@"SIGNAL_D"
+             object:nil];
+    
+    [nc addObserver:self
+           selector:@selector(onSignalGeoDetected:)
+               name:@"SIGNAL_GEO"
+             object:nil];
 }
     
     
@@ -52,9 +85,46 @@
 
 
 - (void) onActivityDetected:(NSNotification*)notification {
-    NSLog(@"onActivityDetected");
-   
     self.activityLabel.text = notification.object;
+}
+
+
+- (void) onSignalADetected:(NSNotification*)notification {
+    self.labelA.text = notification.object;
+}
+
+
+- (void) onSignalBDetected:(NSNotification*)notification {
+    self.labelB.text = notification.object;
+}
+
+
+- (void) onSignalCDetected:(NSNotification*)notification {
+    self.labelC.text = notification.object;
+}
+
+
+- (void)onSignalDDetected:(NSNotification*)notification {
+    self.labelD.text = notification.object;
+}
+
+- (void)onSignalGeoDetected:(NSNotification*)notification {
+    CLLocation* geo = (CLLocation*)notification.object;
+    self.labelGeo.text = [NSString stringWithFormat:@"%f, %f", geo.coordinate.latitude, geo.coordinate.longitude];
+
+    CLGeocoder *geocoder = [[CLGeocoder alloc] init];
+    [geocoder reverseGeocodeLocation:geo completionHandler:^(NSArray *placemarks, NSError *error){
+        
+        if (placemarks.count == 0) {
+            self.labelAddress.text = @"Unknown";
+        }
+        
+        CLPlacemark *placemark = placemarks[0];
+        
+        if (placemark) {
+            self.labelAddress.text = placemark.name;
+        }
+    }];
 }
 
 

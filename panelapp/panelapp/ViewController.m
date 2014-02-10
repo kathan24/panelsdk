@@ -81,6 +81,12 @@
                name:@"SIGNAL_GEO_OFF"
              object:nil];
     
+    [nc addObserver:self
+           selector:@selector(onDoNotTrackDetected:)
+               name:@"DNT"
+             object:nil];
+    
+    
 }
     
     
@@ -118,6 +124,12 @@
 - (void) onSignalGeoDisabled: (NSNotification*) notification {
     [[[UIAlertView alloc] initWithTitle:@"Location Sharing" message:@"The SDK detected that the location sharing request was denied. The Panel SDK will not operate without location.\n\nPlease enable location sharing and try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
+
+- (void) onDoNotTrackDetected: (NSNotification*) notification {
+    [[[UIAlertView alloc] initWithTitle:@"Advertiser Tracking" message:@"The SDK detected you wish not to be tracked. The Panel SDK will not operate without tracking.\n\nPlease enable tracking under Settings / General / Privacy and try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+}
+
+
 
 
 - (void)onSignalGeoDetected:(NSNotification*)notification {

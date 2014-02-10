@@ -14,7 +14,6 @@
 #import <CoreMotion/CoreMotion.h>
 #import <AdSupport/ASIdentifierManager.h>
 
-typedef void(^ActivityUpdateBlock)(CMMotionActivity *activity);
 
 NSString * const XAD_NOTIFICATION_DATA_TRANSMITTED = @"XAD_DATA_TRANSMITTED";
 NSString * const XAD_NOTIFICATION_ACTIVITY_DETECTED = @"XAD_ACTIVITY_DETECTED";
@@ -26,6 +25,8 @@ static NSString * const FACEBOOK_APP_ID_XAD_PANEL = @"1418228921754388";
 
 static NSTimeInterval STATIONARY_TIME_THRESHOLD = 180; // 3 min
 static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
+
+static CLLocationDistance CONSTANT_DISTANCE_THRESHOLD = 50; // meters
 
 
 @interface NSURLRequest (Extension)
@@ -39,9 +40,6 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     @property (strong, nonatomic) CLLocationManager *locationManager;
     @property (strong, nonatomic) CMMotionActivityManager *activityManager;
     @property (nonatomic, strong) ACAccount * facebookAccount;
-
-    @property (nonatomic, assign) CLLocationDistance variableDistanceThreshold;
-    @property (nonatomic, assign) BOOL firstEmissionCompleted;
 
     + (NSString*) facebookId;
     + (void) setFacebookId:(NSString *)value;
@@ -101,12 +99,9 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                    name: NOTIFICATION_DISTANCE_THRESHOLD_PASSED
                  object: nil];
         
-        self.cachedLocation = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
+        self.cachedLocation = nil;
         
         // TODO: Detect if the user did not enable location.
-        
-        self.variableDistanceThreshold = 10; // meters
-        self.firstEmissionCompleted = NO;
         
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
@@ -131,6 +126,7 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                              NSLog(@"Stationary: starting timer.");
                              self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: STATIONARY_TIME_THRESHOLD target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
                          }
+                         
                      } else if ([activity walking] || [activity running] || [activity automotive]) {
                          
                          NSLog(@"Activity: cancelling timer.");
@@ -138,8 +134,6 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                          [self.pulseTimer invalidate];
                          self.pulseTimer = nil;
                          [self onActivityDetected: activity];
-                     } else {
-                         NSLog(@"Unknown activity");
                      }
                      
                      
@@ -154,34 +148,7 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     return self;
 }
 
-    
-    
-+ (CLLocationDistance) sigmoidThresholdBySpeed:(CLLocationSpeed) speedMetersPerSec {
-    
-    NSLog(@"sigmoidThresholdBySpeed(%f)", speedMetersPerSec);
-    
-    if (speedMetersPerSec < 0.0) {
-        NSLog(@"Too slow!");
-        return 10.0;
-    }
 
-    double speedKmPerHour =  speedMetersPerSec * 3.6;
-    
-    // Sigmoid function
-    
-    // Walking speed of 5 Km/h gives a 95m threshold
-    // Running speed of 20 Km/h gives a 330m threshold
-    // Car speed of 100 Km/h (62mph) gives a 1Km threshold
-    // Anything beyond is capped at 2Km
-    
-    double threshold = ((speedKmPerHour) / (100.0 + fabs((speedKmPerHour)))) * (2.0 * THRESHOLD_AT_100KPH);
-    
-    NSLog(@"Threshold(%f): %f", speedKmPerHour, threshold);
-    
-    return threshold;
-}
-    
-    
 - (void) onActivityDetected:(id)activity {
     
     NSLog(@"onActivityDetected");
@@ -189,7 +156,6 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     // Re-activate the GPS,
 
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.variableDistanceThreshold = [xAdPanelSdk sigmoidThresholdBySpeed: self.cachedLocation.speed];
     
     id activityName = nil;
     
@@ -205,9 +171,8 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_ACTIVITY_DETECTED object: activityName];
         
     NSArray* conf = @[@"Low Confidence", @"Medium Confidence", @"High Confidence"];
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_A" object: [NSString stringWithFormat:@"%.1f", self.cachedLocation.speed]];
     [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_B" object: [conf objectAtIndex:[activity confidence]]];
-    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_C" object: [NSString stringWithFormat:@"%.1f", self.variableDistanceThreshold]];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_C" object: [NSString stringWithFormat:@"%.1f", CONSTANT_DISTANCE_THRESHOLD]];
 }
 
 
@@ -230,51 +195,40 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
 }
 
 
-    
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
-    {
-        
-        if (newLocation.coordinate.longitude == oldLocation.coordinate.longitude &&
-            newLocation.coordinate.latitude == oldLocation.coordinate.latitude &&
-            newLocation.horizontalAccuracy == oldLocation.horizontalAccuracy)
-        {
-            NSLog(@"Same location");
-            return;
-        }
-        
-
-        
-        // Check accuracy
-        
-        CLLocationDistance distance = ([newLocation distanceFromLocation:oldLocation]);// * 0.000621371192;
-
-        NSLog(@"New location: %@", newLocation);
-        NSLog(@"    [+] Speed: %f Distance: %f  Threshold: %f", newLocation.speed, distance, self.variableDistanceThreshold);
-
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_D" object: [NSString stringWithFormat:@"%.1f m", distance]];
-
-       
-        /*
-        // Added due to minor fluctuations of the location perhaps due to hand movements.
-        if (!self.firstEmissionCompleted && oldLocation && distance < .001) {
-            return;
-        }
-        */
-        
-        if (distance >= self.variableDistanceThreshold) {
-            NSLog(@"    [+] New point recorded");
-            self.cachedLocation = newLocation;
-            [[NSNotificationCenter defaultCenter] postNotificationName: NOTIFICATION_DISTANCE_THRESHOLD_PASSED object: [NSNumber numberWithInt:distance]];
-        }
-        
-//        [[NSNotificationCenter defaultCenter] postNotificationName: NOTIFICATION_NEW_LOCATION_DETECTED object:newLocation];
-        [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_GEO" object:newLocation];
+{
+    if (!self.cachedLocation) {
+        self.cachedLocation = newLocation;
+        // Treat as if old location. Distance will be 0 thus no problem.
     }
+    
+    
+    CLLocationDistance distance = ([newLocation distanceFromLocation: self.cachedLocation]);
+
+    NSLog(@"New location: %@", newLocation);
+    NSLog(@"    [+] Speed: %f Distance: %f  Threshold: %f", newLocation.speed, distance, CONSTANT_DISTANCE_THRESHOLD);
+
+    if (distance >= CONSTANT_DISTANCE_THRESHOLD)  {
+        NSLog(@"    [+] New point recorded");
+        self.cachedLocation = newLocation;
+        [[NSNotificationCenter defaultCenter] postNotificationName: NOTIFICATION_DISTANCE_THRESHOLD_PASSED object: [NSNumber numberWithInt:distance]];
+    }
+        
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_GEO" object: newLocation];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_A" object: [NSString stringWithFormat:@"%.1f", newLocation.speed]];
+    [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_D" object: [NSString stringWithFormat:@"%.1f m", distance]];
+}
 
 
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    if ([[error domain] isEqualToString: kCLErrorDomain] && [error code] == kCLErrorDenied) {
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_GEO_OFF" object: nil];
+        
+    }
+}
     
 #pragma mark - Data Transmit
 
@@ -319,9 +273,7 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
     }
     
     NSURL *resourceUrl = [xAdPanelSdk getWebServiceUrl];
-    
-//     [[NSNotificationCenter defaultCenter] postNotificationName: @"SIGNAL_GEO" object: self.cachedLocation];
-    
+
     NSDictionary *params = @{
                              @"app": [xAdPanelSdk applicationName],
                              @"idfa": [xAdPanelSdk advertisingIdentifier],
@@ -367,7 +319,6 @@ static CLLocationDistance THRESHOLD_AT_100KPH = 1000; // meters
                                
                                NSLog(@"REST Response: %@", txtResponse);
                                
-                               self.firstEmissionCompleted = YES;
                                [[NSNotificationCenter defaultCenter] postNotificationName: XAD_NOTIFICATION_DATA_TRANSMITTED object: nil];
                            }];
 

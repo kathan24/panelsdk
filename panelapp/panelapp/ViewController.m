@@ -75,6 +75,12 @@
            selector:@selector(onSignalGeoDetected:)
                name:@"SIGNAL_GEO"
              object:nil];
+
+    [nc addObserver:self
+           selector:@selector(onSignalGeoDisabled:)
+               name:@"SIGNAL_GEO_OFF"
+             object:nil];
+    
 }
     
     
@@ -107,6 +113,12 @@
 - (void)onSignalDDetected:(NSNotification*)notification {
     self.labelD.text = notification.object;
 }
+
+
+- (void) onSignalGeoDisabled: (NSNotification*) notification {
+    [[[UIAlertView alloc] initWithTitle:@"Location Sharing" message:@"The SDK detected that the location sharing request was denied. The Panel SDK will not operate without location.\n\nPlease enable location sharing and try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+}
+
 
 - (void)onSignalGeoDetected:(NSNotification*)notification {
     CLLocation* geo = (CLLocation*)notification.object;

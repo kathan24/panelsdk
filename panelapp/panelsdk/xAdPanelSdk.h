@@ -9,25 +9,30 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-UIKIT_EXTERN NSString * const XAD_NOTIFICATION_DATA_TRANSMITTED;
-UIKIT_EXTERN NSString * const XAD_NOTIFICATION_ACTIVITY_DETECTED;
+
+typedef enum {
+    GenderMale,
+    GenderFemale
+} xAdPanelSdkGender;
 
 
 @interface xAdPanelSdk : NSObject <CLLocationManagerDelegate>
 
-+ (void) initialize;
-    
-+ (NSDate*) dateOfBirth;
-+ (void) setDateOfBirth:(NSDate*)value;
-    
-+ (BOOL) sharefb;
-+ (void) setSharefb:(BOOL)value;
 
-+ (BOOL) shareloc;
-+ (void) setShareloc:(BOOL)value;
-    
-+ (NSString*) gender;
-+ (void) setGender:(NSString*)value;
++ (void) startPanelSdkWithAppKey:(id)appKey;
+
+
++ (NSDate*)dateOfBirth;
++ (void) setDateOfBirth:(NSDate*)value;
+
++ (xAdPanelSdkGender) gender;
++ (void) setGender:(xAdPanelSdkGender)value;
+
++ (BOOL) shareLocation;
++ (void) setShareLocation:(BOOL)value;
+
+
+
 
 
 @end

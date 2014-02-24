@@ -17,11 +17,6 @@
 		DC4CEA441880700C00D90BEE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA421880700C00D90BEE /* Main.storyboard */; };
 		DC4CEA471880700C00D90BEE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA461880700C00D90BEE /* ViewController.m */; };
 		DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA481880700C00D90BEE /* Images.xcassets */; };
-		DC4CEA501880700C00D90BEE /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA4F1880700C00D90BEE /* XCTest.framework */; };
-		DC4CEA511880700C00D90BEE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA301880700C00D90BEE /* Foundation.framework */; };
-		DC4CEA521880700C00D90BEE /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA341880700C00D90BEE /* UIKit.framework */; };
-		DC4CEA5A1880700C00D90BEE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA581880700C00D90BEE /* InfoPlist.strings */; };
-		DC4CEA5C1880700C00D90BEE /* panelappTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA5B1880700C00D90BEE /* panelappTests.m */; };
 		DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */; };
 		DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */; };
 		DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6B1880727500D90BEE /* Accounts.framework */; };
@@ -30,17 +25,8 @@
 		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
 		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
+		DCE69D5918BADE620098440D /* xAdPanelSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE69D5818BADE620098440D /* xAdPanelSettings.m */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		DC4CEA531880700C00D90BEE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DC4CEA251880700C00D90BEE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DC4CEA2C1880700C00D90BEE;
-			remoteInfo = panelapp;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DC17B46318A63E860025318F /* sonar_ping.aif */ = {isa = PBXFileReference; lastKnownFileType = file; path = sonar_ping.aif; sourceTree = "<group>"; };
@@ -58,7 +44,6 @@
 		DC4CEA451880700C00D90BEE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		DC4CEA461880700C00D90BEE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		DC4CEA481880700C00D90BEE /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = panelappTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC4CEA4F1880700C00D90BEE /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		DC4CEA571880700C00D90BEE /* panelappTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "panelappTests-Info.plist"; sourceTree = "<group>"; };
 		DC4CEA591880700C00D90BEE /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -73,6 +58,8 @@
 		DCCC76CC188F094D00495880 /* xAdPanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSdk.m; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		DCE69D5718BADE620098440D /* xAdPanelSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSettings.h; sourceTree = "<group>"; };
+		DCE69D5818BADE620098440D /* xAdPanelSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSettings.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,16 +75,6 @@
 				DC4CEA331880700C00D90BEE /* CoreGraphics.framework in Frameworks */,
 				DC4CEA351880700C00D90BEE /* UIKit.framework in Frameworks */,
 				DC4CEA311880700C00D90BEE /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DC4CEA4B1880700C00D90BEE /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DC4CEA501880700C00D90BEE /* XCTest.framework in Frameworks */,
-				DC4CEA521880700C00D90BEE /* UIKit.framework in Frameworks */,
-				DC4CEA511880700C00D90BEE /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +96,6 @@
 			isa = PBXGroup;
 			children = (
 				DC4CEA2D1880700C00D90BEE /* panelapp.app */,
-				DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -192,6 +168,8 @@
 			children = (
 				DCCC76CB188F094D00495880 /* xAdPanelSdk.h */,
 				DCCC76CC188F094D00495880 /* xAdPanelSdk.m */,
+				DCE69D5718BADE620098440D /* xAdPanelSettings.h */,
+				DCE69D5818BADE620098440D /* xAdPanelSettings.m */,
 			);
 			path = panelsdk;
 			sourceTree = "<group>";
@@ -216,24 +194,6 @@
 			productReference = DC4CEA2D1880700C00D90BEE /* panelapp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DC4CEA4D1880700C00D90BEE /* panelappTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DC4CEA621880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelappTests" */;
-			buildPhases = (
-				DC4CEA4A1880700C00D90BEE /* Sources */,
-				DC4CEA4B1880700C00D90BEE /* Frameworks */,
-				DC4CEA4C1880700C00D90BEE /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DC4CEA541880700C00D90BEE /* PBXTargetDependency */,
-			);
-			name = panelappTests;
-			productName = panelappTests;
-			productReference = DC4CEA4E1880700C00D90BEE /* panelappTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -245,9 +205,6 @@
 				TargetAttributes = {
 					DC4CEA2C1880700C00D90BEE = {
 						DevelopmentTeam = RH7J8RUH8M;
-					};
-					DC4CEA4D1880700C00D90BEE = {
-						TestTargetID = DC4CEA2C1880700C00D90BEE;
 					};
 				};
 			};
@@ -265,7 +222,6 @@
 			projectRoot = "";
 			targets = (
 				DC4CEA2C1880700C00D90BEE /* panelapp */,
-				DC4CEA4D1880700C00D90BEE /* panelappTests */,
 			);
 		};
 /* End PBXProject section */
@@ -283,14 +239,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DC4CEA4C1880700C00D90BEE /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DC4CEA5A1880700C00D90BEE /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -303,26 +251,11 @@
 				DC4CEA411880700C00D90BEE /* AppDelegate.m in Sources */,
 				DC4CEA3D1880700C00D90BEE /* main.m in Sources */,
 				DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DC4CEA4A1880700C00D90BEE /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DC4CEA5C1880700C00D90BEE /* panelappTests.m in Sources */,
+				DCE69D5918BADE620098440D /* xAdPanelSettings.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		DC4CEA541880700C00D90BEE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DC4CEA2C1880700C00D90BEE /* panelapp */;
-			targetProxy = DC4CEA531880700C00D90BEE /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		DC4CEA391880700C00D90BEE /* InfoPlist.strings */ = {
@@ -456,48 +389,6 @@
 			};
 			name = Release;
 		};
-		DC4CEA631880700C00D90BEE /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/panelapp.app/panelapp";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "panelappTests/panelappTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		DC4CEA641880700C00D90BEE /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/panelapp.app/panelapp";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "panelapp/panelapp-Prefix.pch";
-				INFOPLIST_FILE = "panelappTests/panelappTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -515,15 +406,6 @@
 			buildConfigurations = (
 				DC4CEA601880700C00D90BEE /* Debug */,
 				DC4CEA611880700C00D90BEE /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DC4CEA621880700C00D90BEE /* Build configuration list for PBXNativeTarget "panelappTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DC4CEA631880700C00D90BEE /* Debug */,
-				DC4CEA641880700C00D90BEE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

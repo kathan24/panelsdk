@@ -41,9 +41,8 @@
 - (IBAction)onDoneTapped:(id)sender {
     
     [xAdPanelSdk setDateOfBirth: self.dateOfBirth.date];
-    [xAdPanelSdk setSharefb: self.shareFacebook.on];
-    [xAdPanelSdk setShareloc: self.shareLocation.on];
-    [xAdPanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? @"m" : @"f"];
+    [xAdPanelSdk setShareLocation: self.shareLocation.on];
+    [xAdPanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? GenderMale : GenderFemale];
     [self dismissViewControllerAnimated:YES completion: nil];
 }
 
@@ -54,10 +53,9 @@
     [super viewDidLoad];
 
     self.dateOfBirth.date = [xAdPanelSdk dateOfBirth];
-    self.shareFacebook.on = [xAdPanelSdk sharefb];
-    self.shareLocation.on = [xAdPanelSdk shareloc];
+    self.shareLocation.on = [xAdPanelSdk shareLocation];
     
-    self.gender.selectedSegmentIndex = [[xAdPanelSdk gender] isEqualToString:@"m"] ? 0 : 1;
+    self.gender.selectedSegmentIndex = [xAdPanelSdk gender];
 }
 
 - (void)didReceiveMemoryWarning

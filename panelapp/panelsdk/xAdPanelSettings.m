@@ -11,11 +11,14 @@
 
 static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/provisioning/%@.json";
 
+static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 
 @interface xAdPanelSettings ()
 @property (nonatomic, strong) id appKey;
 @property (nonatomic, strong) NSMutableDictionary *fields;
+@property (nonatomic, strong) NSTimer *settingsTimer;
+
 @end
 
 @implementation xAdPanelSettings
@@ -27,16 +30,14 @@ static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/
     if (self)
     {
         self.appKey = appKey;
-        
-        NSDictionary *defaults = @{
-                                   @"xad_panel_dob": [NSDate date],
-                                   @"xad_panel_shareloc":@NO,
-                                   @"xad_panel_gender":@"m"
-                                   };
-        
-        [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
 
-        [self retrieveSettings];
+        self.settingsTimer = [NSTimer scheduledTimerWithTimeInterval: TIME_BETWEEN_SETTINGS_RELOAD
+                                                             target: self
+                                                           selector: @selector(onRefreshSettingsTimerExpired:)
+                                                           userInfo: nil
+                                                            repeats: YES];
+        
+        [self performSelector:@selector(retrieveSettings) withObject:nil afterDelay:0];
     }
     
     return self;
@@ -45,7 +46,10 @@ static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/
 
 
 
-
+- (void) onRefreshSettingsTimerExpired:(NSTimer *)timer {
+    NSLog(@"onRefreshSettingsTimerExpired");
+    [self retrieveSettings];
+}
 
 
 
@@ -127,7 +131,7 @@ static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/
 
 
 
-+ (NSString*) userDateOfBirth {
+- (NSString*) userDateOfBirth {
     NSDate *dob = [[NSUserDefaults standardUserDefaults] objectForKey:@"xad_panel_dob"];
     
     return [xAdPanelSettings stringFromTime:dob];
@@ -135,17 +139,17 @@ static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/
 
 
 
-+ (NSString*) userGender {
+- (NSString*) userGender {
     
-    int genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_gender"] intValue];
+    int genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] intValue];
     
     return (genderValue == 0) ? @"m" : @"f";
 }
 
 
 
-+ (BOOL) userSharesLocation {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_shareloc"] boolValue];
+- (BOOL) userInPanel {
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] boolValue];
 }
 
 
@@ -197,6 +201,8 @@ static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/
     }
     
     self.fields = [NSMutableDictionary dictionaryWithDictionary: provisioning];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"XAD_SETTINGS_UPDATED" object: self];
 }
 
 

@@ -32,7 +32,7 @@
 
 @property (nonatomic, readonly) id userGender;
 @property (nonatomic, readonly) id userDateOfBirth;
-@property (nonatomic, readonly) BOOL userSharesLocation;
+@property (nonatomic, readonly) BOOL userInPanel;
 
 
 

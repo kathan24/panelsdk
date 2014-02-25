@@ -28,8 +28,8 @@ typedef enum {
 + (xAdPanelSdkGender) gender;
 + (void) setGender:(xAdPanelSdkGender)value;
 
-+ (BOOL) shareLocation;
-+ (void) setShareLocation:(BOOL)value;
++ (BOOL) userInPanel;
++ (void) setUserInPanel:(BOOL)value;
 
 
 

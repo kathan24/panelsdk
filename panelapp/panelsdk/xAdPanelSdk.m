@@ -14,19 +14,21 @@
 #import <AdSupport/ASIdentifierManager.h>
 
 
+static NSString * const PANEL_SDK_VERSION = @"1.0";
+
+
+// Required to allow HTTPS connections to xAd's Servers
 @interface NSURLRequest (Extension)
     + (BOOL)allowsAnyHTTPSCertificateForHost:(NSString*)host;
     + (void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString*)host;
 @end
 
-static double SECONDS_IN_DAY = 86400;
 
 @interface xAdPanelSdk ()
-@property (strong, nonatomic) NSTimer *pulseTimer;
-@property (strong, nonatomic) NSTimer *constTimer;
-@property (strong, nonatomic) NSTimer *settingsTimer;
+@property (strong, nonatomic) NSTimer *stationaryConfirmTimer;
+@property (strong, nonatomic) NSTimer *reportLocationTimer;
 
-@property (strong, nonatomic) CLLocation *cachedLocation;
+@property (strong, nonatomic) CLLocation *lastReportedLocation;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) CMMotionActivityManager *activityManager;
 
@@ -34,6 +36,9 @@ static double SECONDS_IN_DAY = 86400;
 @property (nonatomic, assign) CLLocationDistance distanceThreshold;
 
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTask;
+
+@property (nonatomic, assign) BOOL locationEnabled;
+
 @end
 
 
@@ -60,23 +65,80 @@ static double SECONDS_IN_DAY = 86400;
     xAdPanelSdk *obj = [xAdPanelSdk sharedInstance];
     
     if (obj) {
+        NSDictionary *defaults = @{
+                                   @"xad_panel_dob": [NSDate date],
+                                   @"xad_panel_shareloc":@NO,
+                                   @"xad_panel_gender":@"m"
+                                   };
+        
+        [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
+
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        
+        [nc addObserver: obj
+               selector: @selector(onSettingsUpdated:)
+                   name: @"XAD_SETTINGS_UPDATED"
+                 object: nil];
+        
         obj.settings = [[xAdPanelSettings alloc] initWithAppKey:appKey];
-        obj.settingsTimer = [NSTimer scheduledTimerWithTimeInterval: SECONDS_IN_DAY target: obj selector:@selector(onRefreshSettingsTimerExpired:) userInfo:nil repeats:YES];
     }
+}
+
+
+- (void) stopPanelServices {
+    [self disableLocation];
+    [self.activityManager stopActivityUpdates];
+    [self.reportLocationTimer invalidate];
+    [self.stationaryConfirmTimer invalidate];
+    
+    self.distanceThreshold = 9999;
+    self.lastReportedLocation = nil;
+}
+
+
+- (void) onSettingsUpdated:(NSNotification*)notification {
+
+    // Restart services
+    
+    [self stopPanelServices];
+
+    [self startPanelServices];
 }
 
 
 
 - (BOOL) canStartServices {
     
+    if (!self.settings) {
+        NSLog(@"Settings not initialized");
+        return NO;
+    }
+    
     // Any of these cases is reason enough not to start the SDK.
     
-    return (
-            !self.settings.userSharesLocation ||
-            !self.settings.enabled ||
-            (self.settings.requiresM7 && ![CMMotionActivityManager isActivityAvailable]) ||
-            (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled])
-            );
+    if (!self.settings.userInPanel) {
+        NSLog(@"User is not in panel.");
+        return NO;
+    }
+    
+    if (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
+        NSLog(@"Tracking is prohibited");
+        return NO;
+    }
+
+    if (!self.settings.enabled) {
+        NSLog(@"xAd wants panel OFF.");
+        return NO;
+    }
+    
+#if !TARGET_IPHONE_SIMULATOR
+    if (self.settings.requiresM7 && ![CMMotionActivityManager isActivityAvailable]) {
+        NSLog(@"M7 chip required but not available");
+        return NO;
+    }
+#endif
+    
+    return YES;
     
     
     // NOTE: isActivityAvailable is only available on devices with M7.
@@ -110,18 +172,16 @@ static double SECONDS_IN_DAY = 86400;
                                                   if ([activity stationary]) {
                                                       
                                                       // Prevent instantanious status change to stationary for cases like traffic lights.
-                                                      if (!self.pulseTimer) {
-                                                          NSLog(@"Stationary: starting timer.");
-                                                          self.pulseTimer = [NSTimer scheduledTimerWithTimeInterval: self.settings.timeBeforeStationary target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
+                                                      if (!self.stationaryConfirmTimer) {
+                                                          self.stationaryConfirmTimer = [NSTimer scheduledTimerWithTimeInterval: self.settings.timeBeforeStationary target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
                                                       }
                                                       
                                                   } else if ([activity walking] || [activity running] || [activity automotive]) {
                                                       
-                                                      if (self.pulseTimer) {
-                                                          NSLog(@"Activity: cancelling timer.");
+                                                      if (self.stationaryConfirmTimer) {
                                                           // Activity detected. Cancel timer and adjust based on activity type.
-                                                          [self.pulseTimer invalidate];
-                                                          self.pulseTimer = nil;
+                                                          [self.stationaryConfirmTimer invalidate];
+                                                          self.stationaryConfirmTimer = nil;
                                                       }
                                                       
                                                       [self onActivityDetected: activity];
@@ -135,29 +195,29 @@ static double SECONDS_IN_DAY = 86400;
 
 
 - (void) startPanelServices {
+    NSLog(@"startPanelServices");
     
     if (![self canStartServices]) {
         NSLog(@"Panel SDK is DISABLED");
         return;
     }
-    
-    
-    if (self.settings.useConstTime) {
-        
-        self.constTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onConstTimerExpired:) userInfo:nil repeats:YES];
-        
-    }
 
+    if (self.settings.useConstTime) {
+        NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
+        self.reportLocationTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onReportLocationTimerExpired:) userInfo:nil repeats:YES];
+    }
     
     if (self.settings.eventsWhilePhoneIsLocked) {
         [self enableEventsWhenPhoneLocked];
     }
     
+    self.distanceThreshold = self.settings.distanceWhileDriving;
+    
     // Initialize Location Services
     self.locationManager = [[CLLocationManager alloc] init];
     self.locationManager.delegate = self;
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    self.cachedLocation = nil;
+    self.lastReportedLocation = nil;
     [self.locationManager startUpdatingLocation];
     
 
@@ -168,7 +228,10 @@ static double SECONDS_IN_DAY = 86400;
         
     } else {
         
-        // TODO: How to handle older devices?
+        // Need to determine under which cases we hit this case.
+        
+        // According to documentation iOS 7.0 should return YES, although M7 might not be available.
+        // Needs additional info.
         
     }
 
@@ -185,29 +248,56 @@ static double SECONDS_IN_DAY = 86400;
     CLLocationAccuracy newAccuracy = kCLLocationAccuracyBest;
 
     if ([activity walking]) {
+        NSLog(@"    [+] walking");
         self.distanceThreshold = self.settings.distanceWhileWalking;
     } else if ([activity running]) {
+        NSLog(@"    [+] running");
         self.distanceThreshold = self.settings.distanceWhileRunning;
     } else if ([activity automotive]) {
+        NSLog(@"    [+] automotive");
         self.distanceThreshold = self.settings.distanceWhileDriving;
         newAccuracy = kCLLocationAccuracyBestForNavigation;
     }
     
     self.locationManager.desiredAccuracy = newAccuracy;
+
+    [self enableLocation];
+}
+
+
+- (void) enableLocation {
+    
+    if (self.locationEnabled) {
+        return;
+    }
+    
     [self.locationManager startUpdatingLocation];
+    self.locationEnabled = YES;
+    NSLog(@"GPS Started");
+}
+
+
+- (void) disableLocation {
+    
+    if (!self.locationEnabled) {
+        return;
+    }
+    
+    [self.locationManager stopUpdatingLocation];
+    self.locationEnabled = NO;
+    NSLog(@"GPS Stopped");
 }
 
 
 -(void) onUserIsStationary:(NSTimer *)timer {
 
-    [self transmitLocation: self.locationManager.location force:YES];
+    NSLog(@"    [+] stationary.");
+    
+    [self transmitLocation: self.locationManager.location force: YES];
 
     // Now we can stop the GPS
-    [self.locationManager stopUpdatingLocation];
+    [self disableLocation];
 }
-
-
-
 
 
 - (void) transmitLocation: (CLLocation*) newLocation force:(BOOL)force{
@@ -215,41 +305,51 @@ static double SECONDS_IN_DAY = 86400;
     NSTimeInterval locationAge = [[NSDate date] timeIntervalSinceDate: newLocation.timestamp];
 
     if (newLocation.coordinate.latitude == 0 && newLocation.coordinate.longitude == 0) {
-        // Invalid lat/long. Ignore.
+        NSLog(@"Invalid Lat/Lon");
         return;
     }
     
     if (!force) {
         if (self.settings.maxGeoAge > 0 && locationAge > self.settings.maxGeoAge) {
+            NSLog(@"Too Old %.0f", locationAge);
             return;
         }
         
         if (self.settings.minGeoAccuracy > 0 && newLocation.horizontalAccuracy > self.settings.minGeoAccuracy) {
+            NSLog(@"Low Accuracy %0.f", newLocation.horizontalAccuracy);
+            return;
+        }
+        
+        CLLocationDistance distance = ([newLocation distanceFromLocation: self.lastReportedLocation]);
+        
+        if (!self.settings.useConstTime && distance < self.distanceThreshold) {
+            // Distance threshold not exceeded yet.
+            NSLog(@"UT(%0.f): %.0f m", self.distanceThreshold, distance);
             return;
         }
     }
     
-    CLLocationDistance distance = ([newLocation distanceFromLocation: self.cachedLocation]);
-    self.cachedLocation = newLocation;
     
-    if (!self.settings.useConstTime && self.distanceThreshold > distance) {
-        // Distance threshold not exceeded yet.
-        return;
-    }
+    self.lastReportedLocation = newLocation;
+    
+    // Missing case: If const time, then only the timer can send
 
-    if (!self.settings.userSharesLocation) {
+    if (!self.settings.userInPanel) {
         // User does has not opted-in.
+        NSLog(@"User is not in panel.");
         return;
     }
     
     if (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         // Although advertising tracking is not relavant, we can choose to obey it and by default we do.
+        NSLog(@"TR");
         return;
     }
     
     NSURL *resourceUrl = [xAdPanelSdk getWebServiceUrl];
     
     NSDictionary *params = @{
+                             @"sdk_ver": PANEL_SDK_VERSION,
                              @"app": [xAdPanelSdk applicationName],
                              @"idfa": [xAdPanelSdk advertisingIdentifier],
                              @"dnt": [xAdPanelSdk advertisingTrackingEnabled],
@@ -259,8 +359,8 @@ static double SECONDS_IN_DAY = 86400;
                              @"lang": [xAdPanelSdk deviceLanguage],
                              @"lat": [NSString stringWithFormat:@"%f", newLocation.coordinate.latitude],
                              @"lon": [NSString stringWithFormat:@"%f", newLocation.coordinate.longitude],
-                             @"geo_ha": [NSString stringWithFormat:@"%f", newLocation.horizontalAccuracy],
-                             @"geo_age": [NSString stringWithFormat:@"%f", locationAge]
+                             @"geo_ha": [NSString stringWithFormat:@"%.0f", newLocation.horizontalAccuracy],
+                             @"geo_age": [NSString stringWithFormat:@"%.0f", locationAge]
                              };
     
     NSURLRequest *httpRequest = [xAdPanelSdk createRequestWithUrl:resourceUrl andParameters:params];
@@ -279,26 +379,8 @@ static double SECONDS_IN_DAY = 86400;
 }
 
 
-- (void) onRefreshSettingsTimerExpired:(NSTimer *)timer {
-    NSLog(@"onRefreshSettingsTimerExpired");
-    
-    [self.locationManager stopUpdatingLocation];
-    [self.activityManager stopActivityUpdates];
-    [self.constTimer invalidate];
-    [self.pulseTimer invalidate];
-    
-    // Perhaps not needed?!
-    [[UIApplication sharedApplication] endBackgroundTask: self.backgroundTask];
-    
-    [self.settings retrieveSettings];
-
-    [self startPanelServices];
-    
-}
-
-
-- (void) onConstTimerExpired:(NSTimer *)timer {
-    NSLog(@"onConstTimerExpired");
+- (void) onReportLocationTimerExpired:(NSTimer *)timer {
+    NSLog(@"onReportLocationTimerExpired");
     
     [self transmitLocation: self.locationManager.location force: NO];
 }
@@ -310,13 +392,25 @@ static double SECONDS_IN_DAY = 86400;
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
-    if (!self.cachedLocation) {
-        self.cachedLocation = newLocation;
-        
+    if (!self.lastReportedLocation) {
+        self.lastReportedLocation = newLocation;
         return;
     }
     
-    [self transmitLocation: newLocation force:NO];
+    CLLocationDistance distance = ([newLocation distanceFromLocation: oldLocation]);
+    
+    if (distance < 1 && newLocation.horizontalAccuracy <= oldLocation.horizontalAccuracy) {
+        // Nothing of value
+        return;
+    }
+
+    if (!self.settings.useConstTime) {
+        
+        // In CONST TIME mode location is aquired from the location manager.
+        // Does not rely on the events directly.
+        
+        [self transmitLocation: newLocation force: NO];
+    }
 }
 
 
@@ -324,8 +418,12 @@ static double SECONDS_IN_DAY = 86400;
     if ([[error domain] isEqualToString: kCLErrorDomain] && [error code] == kCLErrorDenied) {
         
         NSLog(@"GPS ERROR");
+        
+        [self stopPanelServices];
     }
 }
+
+
     
 #pragma mark - Data Transmit
 
@@ -405,6 +503,7 @@ static double SECONDS_IN_DAY = 86400;
 }
 
 
+
 + (NSURLRequest*) createRequestWithUrl:(NSURL *)resourceUrl andParameters:(NSDictionary *)params {
     
     id payload = [xAdPanelSdk toUrlEncoded:params];
@@ -423,13 +522,10 @@ static double SECONDS_IN_DAY = 86400;
 
 
 
-
-
-
-
 + (id) applicationName {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 }
+
 
 
 + (id) applicationVersion {
@@ -478,12 +574,12 @@ static double SECONDS_IN_DAY = 86400;
 }
 
 
-+ (BOOL) shareLocation {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_shareloc"] boolValue];
++ (BOOL) userInPanel {
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] boolValue];
 }
 
-+ (void) setShareLocation:(BOOL)value {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_panel_shareloc"];
++ (void) setUserInPanel:(BOOL)value {
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_user_in_panel"];
 }
 
 

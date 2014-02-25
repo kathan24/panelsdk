@@ -11,13 +11,11 @@
 
 @interface PanelSettingsViewController ()
     @property (weak, nonatomic) IBOutlet UIDatePicker *dateOfBirth;
-    @property (weak, nonatomic) IBOutlet UISwitch *shareFacebook;
-    @property (weak, nonatomic) IBOutlet UISwitch *shareLocation;
+    @property (weak, nonatomic) IBOutlet UISwitch *joinPanel;
     @property (weak, nonatomic) IBOutlet UISegmentedControl *gender;
 
     @property (weak, nonatomic) IBOutlet UILabel *labelTitle;
     @property (weak, nonatomic) IBOutlet UILabel *labelDOB;
-    @property (weak, nonatomic) IBOutlet UILabel *labelShareFb;
     @property (weak, nonatomic) IBOutlet UILabel *labelShareLoc;
     
 @end
@@ -41,7 +39,7 @@
 - (IBAction)onDoneTapped:(id)sender {
     
     [xAdPanelSdk setDateOfBirth: self.dateOfBirth.date];
-    [xAdPanelSdk setShareLocation: self.shareLocation.on];
+    [xAdPanelSdk setUserInPanel: self.joinPanel.on];
     [xAdPanelSdk setGender: self.gender.selectedSegmentIndex == 0 ? GenderMale : GenderFemale];
     [self dismissViewControllerAnimated:YES completion: nil];
 }
@@ -53,10 +51,11 @@
     [super viewDidLoad];
 
     self.dateOfBirth.date = [xAdPanelSdk dateOfBirth];
-    self.shareLocation.on = [xAdPanelSdk shareLocation];
+    self.joinPanel.on = [xAdPanelSdk userInPanel];
     
     self.gender.selectedSegmentIndex = [xAdPanelSdk gender];
 }
+
 
 - (void)didReceiveMemoryWarning
 {

@@ -8,12 +8,10 @@
             <connections>
                 <outlet property="dateOfBirth" destination="Ufa-Iq-gwp" id="zCn-t7-cVQ"/>
                 <outlet property="gender" destination="bcs-Zd-a03" id="fOy-jb-8ok"/>
+                <outlet property="joinPanel" destination="rtt-2A-Y1i" id="TAu-2T-0dk"/>
                 <outlet property="labelDOB" destination="Csy-Bj-l8s" id="xAr-2z-cJe"/>
-                <outlet property="labelShareFb" destination="QMz-cf-f1f" id="At6-km-xds"/>
                 <outlet property="labelShareLoc" destination="lew-uB-Pfk" id="KOZ-F0-8Cd"/>
                 <outlet property="labelTitle" destination="UmO-UR-MxX" id="vGn-t0-yTM"/>
-                <outlet property="shareFacebook" destination="F1Y-Ot-CxR" id="Caf-MR-5RU"/>
-                <outlet property="shareLocation" destination="rtt-2A-Y1i" id="bSN-Eg-3qd"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -22,25 +20,14 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Share facebook profile" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QMz-cf-f1f">
-                    <rect key="frame" x="20" y="329" width="173" height="21"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Share location" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lew-uB-Pfk">
-                    <rect key="frame" x="20" y="374" width="161" height="21"/>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Join panel" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lew-uB-Pfk">
+                    <rect key="frame" x="20" y="344" width="161" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rtt-2A-Y1i">
-                    <rect key="frame" x="251" y="369" width="51" height="31"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                </switch>
-                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F1Y-Ot-CxR">
-                    <rect key="frame" x="251" y="324" width="51" height="31"/>
+                    <rect key="frame" x="251" y="339" width="51" height="31"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                 </switch>
                 <datePicker contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="date" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="Ufa-Iq-gwp">

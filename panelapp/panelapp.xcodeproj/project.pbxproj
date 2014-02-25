@@ -19,12 +19,10 @@
 		DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA481880700C00D90BEE /* Images.xcassets */; };
 		DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */; };
 		DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */; };
-		DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6B1880727500D90BEE /* Accounts.framework */; };
 		DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6D1880728100D90BEE /* CoreLocation.framework */; };
 		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
 		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
-		DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D8188F27DD00495880 /* Social.framework */; };
 		DCE69D5918BADE620098440D /* xAdPanelSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE69D5818BADE620098440D /* xAdPanelSettings.m */; };
 /* End PBXBuildFile section */
 
@@ -51,13 +49,11 @@
 		DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelSettingsViewController.h; path = ../panelsdk/PanelSettingsViewController.h; sourceTree = "<group>"; };
 		DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PanelSettingsViewController.m; path = ../panelsdk/PanelSettingsViewController.m; sourceTree = "<group>"; };
 		DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelSettingsViewController.xib; path = ../panelsdk/PanelSettingsViewController.xib; sourceTree = "<group>"; };
-		DC4CEA6B1880727500D90BEE /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		DC4CEA6D1880728100D90BEE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		DCCC76CB188F094D00495880 /* xAdPanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSdk.h; sourceTree = "<group>"; };
 		DCCC76CC188F094D00495880 /* xAdPanelSdk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSdk.m; sourceTree = "<group>"; };
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
-		DCCC76D8188F27DD00495880 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		DCE69D5718BADE620098440D /* xAdPanelSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSettings.h; sourceTree = "<group>"; };
 		DCE69D5818BADE620098440D /* xAdPanelSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSettings.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -67,8 +63,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DCCC76D9188F27DD00495880 /* Social.framework in Frameworks */,
-				DC4CEA6C1880727500D90BEE /* Accounts.framework in Frameworks */,
 				DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */,
 				DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */,
 				DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */,
@@ -103,11 +97,9 @@
 		DC4CEA2F1880700C00D90BEE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				DCCC76D8188F27DD00495880 /* Social.framework */,
 				DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */,
 				DC4CEA6F1880728900D90BEE /* CoreMotion.framework */,
 				DC4CEA6D1880728100D90BEE /* CoreLocation.framework */,
-				DC4CEA6B1880727500D90BEE /* Accounts.framework */,
 				DC4CEA301880700C00D90BEE /* Foundation.framework */,
 				DC4CEA321880700C00D90BEE /* CoreGraphics.framework */,
 				DC4CEA341880700C00D90BEE /* UIKit.framework */,

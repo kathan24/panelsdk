@@ -21,6 +21,7 @@
 @property (nonatomic, readonly) id name;
 @property (nonatomic, readonly) BOOL useConstTime;
 @property (nonatomic, readonly) double secondsBetweenSignaling;
+@property (nonatomic, readonly) double motionUpdateInterval;
 @property (nonatomic, readonly) BOOL eventsWhilePhoneIsLocked;
 @property (nonatomic, readonly) double distanceWhileWalking;
 @property (nonatomic, readonly) double distanceWhileRunning;

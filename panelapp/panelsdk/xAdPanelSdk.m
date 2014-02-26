@@ -31,6 +31,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 @property (strong, nonatomic) CLLocation *lastReportedLocation;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) CMMotionActivityManager *activityManager;
+@property (strong, nonatomic) CMMotionManager *motionManager; // fallback
 
 @property (nonatomic, strong) xAdPanelSettings *settings;
 @property (nonatomic, assign) CLLocationDistance distanceThreshold;
@@ -88,6 +89,8 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 - (void) stopPanelServices {
     [self disableLocation];
     [self.activityManager stopActivityUpdates];
+    [self.motionManager stopDeviceMotionUpdates];
+    
     [self.reportLocationTimer invalidate];
     [self.stationaryConfirmTimer invalidate];
     
@@ -120,6 +123,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         NSLog(@"User is not in panel.");
         return NO;
     }
+    
     
     if (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         NSLog(@"Tracking is prohibited");
@@ -160,6 +164,25 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 }
 
+- (void) startStationaryConfirmation {
+    // Prevent instantanious status change to stationary for cases like traffic lights.
+    if (!self.stationaryConfirmTimer) {
+        self.stationaryConfirmTimer = [NSTimer scheduledTimerWithTimeInterval: self.settings.timeBeforeStationary
+                                                                       target: self
+                                                                     selector: @selector(onStationaryConfirmed:)
+                                                                     userInfo: nil
+                                                                      repeats: NO];
+    }
+}
+
+- (void) cancelStationaryConfirmation {
+    if (self.stationaryConfirmTimer) {
+        // Activity detected. Cancel timer and adjust based on activity type.
+        [self.stationaryConfirmTimer invalidate];
+        self.stationaryConfirmTimer = nil;
+    }
+}
+
 
 - (void) enableActivityDetection {
     self.activityManager = [[CMMotionActivityManager alloc] init];
@@ -171,18 +194,11 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
                                                   
                                                   if ([activity stationary]) {
                                                       
-                                                      // Prevent instantanious status change to stationary for cases like traffic lights.
-                                                      if (!self.stationaryConfirmTimer) {
-                                                          self.stationaryConfirmTimer = [NSTimer scheduledTimerWithTimeInterval: self.settings.timeBeforeStationary target:self selector:@selector(onUserIsStationary:) userInfo:nil repeats:NO];
-                                                      }
+                                                      [self startStationaryConfirmation];
                                                       
                                                   } else if ([activity walking] || [activity running] || [activity automotive]) {
                                                       
-                                                      if (self.stationaryConfirmTimer) {
-                                                          // Activity detected. Cancel timer and adjust based on activity type.
-                                                          [self.stationaryConfirmTimer invalidate];
-                                                          self.stationaryConfirmTimer = nil;
-                                                      }
+                                                      [self cancelStationaryConfirmation];
                                                       
                                                       [self onActivityDetected: activity];
                                                   }
@@ -194,17 +210,41 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
+
+- (void) enableMotionDetection {
+    
+    [self.motionManager setDeviceMotionUpdateInterval: self.settings.motionUpdateInterval];
+    
+    [self.motionManager startDeviceMotionUpdatesToQueue:[NSOperationQueue currentQueue]
+                                            withHandler:^(CMDeviceMotion *deviceMotion, NSError *error){
+                                                
+                                                if (error) {
+                                                    return;
+                                                }
+                                                
+                                                CMAcceleration userAcceleration = deviceMotion.userAcceleration;
+                                                
+                                                double totalAcceleration = sqrt(userAcceleration.x * userAcceleration.x +
+                                                                                userAcceleration.y * userAcceleration.y + userAcceleration.z * userAcceleration.z);
+                                                
+                                                NSLog(@"totalAcceleration:%f ", totalAcceleration);
+                                                
+                                                if (totalAcceleration < 0.05) {
+                                                    [self startStationaryConfirmation];
+                                                } else {
+                                                    [self cancelStationaryConfirmation];
+                                                    [self onActivityDetected: nil];
+                                                }
+                                            }];
+}
+
+
 - (void) startPanelServices {
     NSLog(@"startPanelServices");
     
     if (![self canStartServices]) {
         NSLog(@"Panel SDK is DISABLED");
         return;
-    }
-
-    if (self.settings.useConstTime) {
-        NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
-        self.reportLocationTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onReportLocationTimerExpired:) userInfo:nil repeats:YES];
     }
     
     if (self.settings.eventsWhilePhoneIsLocked) {
@@ -227,20 +267,16 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         [self enableActivityDetection];
         
     } else {
+        self.motionManager = [[CMMotionManager alloc] init];
         
-        // Need to determine under which cases we hit this case.
-        
-        // According to documentation iOS 7.0 should return YES, although M7 might not be available.
-        // Needs additional info.
-        
+        [self enableMotionDetection];
     }
-
     
+    if (self.settings.useConstTime) {
+        NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
+        self.reportLocationTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onReportLocationTimerExpired:) userInfo:nil repeats:YES];
+    }
 }
-
-
-
-
 
 
 - (void) onActivityDetected:(id)activity {
@@ -257,6 +293,9 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         NSLog(@"    [+] automotive");
         self.distanceThreshold = self.settings.distanceWhileDriving;
         newAccuracy = kCLLocationAccuracyBestForNavigation;
+    } else if (activity == nil) {
+        // User activity from non-M7 device
+        NSLog(@"    [+] activity");
     }
     
     self.locationManager.desiredAccuracy = newAccuracy;
@@ -289,7 +328,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
--(void) onUserIsStationary:(NSTimer *)timer {
+-(void) onStationaryConfirmed:(NSTimer *)timer {
 
     NSLog(@"    [+] stationary.");
     
@@ -400,7 +439,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     CLLocationDistance distance = ([newLocation distanceFromLocation: oldLocation]);
     
     if (distance < 1 && newLocation.horizontalAccuracy <= oldLocation.horizontalAccuracy) {
-        // Nothing of value
+        // Nothing of value - same location and of equal or lesser accuracy
         return;
     }
 

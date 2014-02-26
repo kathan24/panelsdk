@@ -91,6 +91,11 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 }
 
 
+- (double) motionUpdateInterval {
+    return [[self.fields objectForKey:@"motionUpdateInterval"] doubleValue];
+}
+
+
 - (BOOL) eventsWhilePhoneIsLocked {
     return [[self.fields objectForKey:@"eventsWhileLocked"] boolValue];
 }

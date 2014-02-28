@@ -19,7 +19,7 @@
 @property (nonatomic, readonly) BOOL requiresM7;
 @property (nonatomic, readonly) BOOL obeyTrFlag;
 @property (nonatomic, readonly) id name;
-@property (nonatomic, readonly) BOOL useConstTime;
+@property (nonatomic, assign) BOOL useConstTime;
 @property (nonatomic, readonly) double secondsBetweenSignaling;
 @property (nonatomic, readonly) double motionUpdateInterval;
 @property (nonatomic, readonly) BOOL eventsWhilePhoneIsLocked;
@@ -29,6 +29,8 @@
 @property (nonatomic, readonly) double timeBeforeStationary;
 @property (nonatomic, readonly) double minGeoAccuracy;
 @property (nonatomic, readonly) double maxGeoAge;
+@property (nonatomic, readonly) double accelerationThreshold;
+
 @property (nonatomic, readonly) NSUInteger dataFields;
 
 @property (nonatomic, readonly) id userGender;

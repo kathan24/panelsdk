@@ -86,6 +86,11 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 }
 
 
+- (void) setUseConstTime:(BOOL)value {
+    return [self.fields setObject:[NSNumber numberWithBool:value] forKey:@"constTime"];
+}
+
+
 - (double) secondsBetweenSignaling {
     return [[self.fields objectForKey:@"constTimeSeconds"] doubleValue];
 }
@@ -127,6 +132,11 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 - (double) maxGeoAge {
     return [[self.fields objectForKey:@"maxAge"] doubleValue];
+}
+
+
+- (double) accelerationThreshold {
+    return [[self.fields objectForKey:@"accelerationThreshold"] doubleValue];
 }
 
 

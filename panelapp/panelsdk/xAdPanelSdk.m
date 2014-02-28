@@ -225,11 +225,10 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
                                                 CMAcceleration userAcceleration = deviceMotion.userAcceleration;
                                                 
                                                 double totalAcceleration = sqrt(userAcceleration.x * userAcceleration.x +
-                                                                                userAcceleration.y * userAcceleration.y + userAcceleration.z * userAcceleration.z);
-                                                
-                                                NSLog(@"totalAcceleration:%f ", totalAcceleration);
-                                                
-                                                if (totalAcceleration < 0.05) {
+                                                                                userAcceleration.y * userAcceleration.y +
+                                                                                userAcceleration.z * userAcceleration.z);
+
+                                                if (totalAcceleration < self.settings.accelerationThreshold) {
                                                     [self startStationaryConfirmation];
                                                 } else {
                                                     [self cancelStationaryConfirmation];
@@ -254,8 +253,12 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     self.distanceThreshold = self.settings.distanceWhileDriving;
     
     // Initialize Location Services
-    self.locationManager = [[CLLocationManager alloc] init];
-    self.locationManager.delegate = self;
+    
+    if (!self.locationManager) {
+        self.locationManager = [[CLLocationManager alloc] init];
+        self.locationManager.delegate = self;
+    }
+    
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     self.lastReportedLocation = nil;
     [self.locationManager startUpdatingLocation];
@@ -267,11 +270,20 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         [self enableActivityDetection];
         
     } else {
-        self.motionManager = [[CMMotionManager alloc] init];
+        // Motion detection does not compare to what the M7 activity monitor does.
+        // We will use the const time based reporting for older devices.
+
+        self.settings.useConstTime = YES;
+        
+        if (!self.motionManager) {
+            self.motionManager = [[CMMotionManager alloc] init];
+        }
         
         [self enableMotionDetection];
     }
     
+    
+    // Use const time IF provisioned OR it is a older device
     if (self.settings.useConstTime) {
         NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
         self.reportLocationTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onReportLocationTimerExpired:) userInfo:nil repeats:YES];
@@ -294,6 +306,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         self.distanceThreshold = self.settings.distanceWhileDriving;
         newAccuracy = kCLLocationAccuracyBestForNavigation;
     } else if (activity == nil) {
+        self.distanceThreshold = self.settings.distanceWhileWalking;
         // User activity from non-M7 device
         NSLog(@"    [+] activity");
     }

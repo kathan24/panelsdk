@@ -402,17 +402,20 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     
     NSDictionary *params = @{
                              @"sdk_ver": PANEL_SDK_VERSION,
-                             @"app": [xAdPanelSdk applicationName],
-                             @"idfa": [xAdPanelSdk advertisingIdentifier],
-                             @"dnt": [xAdPanelSdk advertisingTrackingEnabled],
-                             @"pro": self.settings.name,
-                             @"dob": self.settings.userDateOfBirth,
-                             @"gender": self.settings.userGender,
-                             @"lang": [xAdPanelSdk deviceLanguage],
-                             @"lat": [NSString stringWithFormat:@"%f", newLocation.coordinate.latitude],
-                             @"lon": [NSString stringWithFormat:@"%f", newLocation.coordinate.longitude],
+                             @"sdk_app": [xAdPanelSdk applicationName],
+                             @"sdk_test": self.settings.name,
+                             @"user_dob": self.settings.userDateOfBirth,
+                             @"user_gender": self.settings.userGender,
                              @"geo_ha": [NSString stringWithFormat:@"%.0f", newLocation.horizontalAccuracy],
-                             @"geo_age": [NSString stringWithFormat:@"%.0f", locationAge]
+                             @"geo_va": [NSString stringWithFormat:@"%.0f", newLocation.verticalAccuracy],
+                             @"geo_lat": [NSString stringWithFormat:@"%f", newLocation.coordinate.latitude],
+                             @"geo_lon": [NSString stringWithFormat:@"%f", newLocation.coordinate.longitude],
+                             @"geo_alt": [NSString stringWithFormat:@"%f", newLocation.altitude],
+                             @"geo_age": [NSString stringWithFormat:@"%.0f", locationAge],
+                             @"dev_ua": [xAdPanelSdk userAgent],
+                             @"dev_lang": [xAdPanelSdk deviceLanguage],
+                             @"dev_idfa": [xAdPanelSdk advertisingIdentifier],
+                             @"dev_dnt": [xAdPanelSdk advertisingTrackingEnabled] /* for privacy watchdogs */
                              };
     
     NSURLRequest *httpRequest = [xAdPanelSdk createRequestWithUrl:resourceUrl andParameters:params];
@@ -600,7 +603,10 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-
++ (id) userAgent {
+    UIWebView* webView = [[UIWebView alloc] initWithFrame:CGRectZero];
+    return [webView stringByEvaluatingJavaScriptFromString:@"navigator.userAgent"];
+}
 
 
 

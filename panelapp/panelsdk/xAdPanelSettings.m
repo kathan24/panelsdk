@@ -56,13 +56,25 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 #pragma mark - Provisining Settings
 
-- (BOOL) enabled {
+
+- (xAdPanelSdkMode) mode {
     
     if (!self.fields) {
-        return NO;
+        return xAdPanelSdkModeDisabled;
+    }
+
+    int value = [[self.fields objectForKey:@"mode"] intValue];
+    
+    if (value < 0 || value > xAdPanelSdkModeOnStop) {
+        return xAdPanelSdkModeDisabled;
     }
     
-    return [[self.fields objectForKey:@"enabled"] boolValue];
+    return value;
+}
+
+
+- (void) setMode:(xAdPanelSdkMode)value {
+    return [self.fields setObject: [NSNumber numberWithInt: value] forKey:@"mode"];
 }
 
 
@@ -78,16 +90,6 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 - (id) name {
     return [self.fields objectForKey:@"name"];
-}
-
-
-- (BOOL) useConstTime {
-    return [[self.fields objectForKey:@"constTime"] boolValue];
-}
-
-
-- (void) setUseConstTime:(BOOL)value {
-    return [self.fields setObject:[NSNumber numberWithBool:value] forKey:@"constTime"];
 }
 
 

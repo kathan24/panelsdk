@@ -10,16 +10,26 @@
 
 // PRIVATE CLASS - CLIENT DOES NOT NEED TO USE
 
+
+typedef enum {
+    xAdPanelSdkModeDisabled,
+    xAdPanelSdkModeConstTime,
+    xAdPanelSdkModeConstDistance,
+    xAdPanelSdkModeOnStop,
+} xAdPanelSdkMode;
+
+
 @interface xAdPanelSettings : NSObject
 
 - (id) initWithAppKey:(id)appKey;
 - (void) retrieveSettings;
 
-@property (nonatomic, readonly) BOOL enabled;
+@property (nonatomic, assign) xAdPanelSdkMode mode;
+
 @property (nonatomic, readonly) BOOL requiresM7;
 @property (nonatomic, readonly) BOOL obeyTrackingFlag;
 @property (nonatomic, readonly) id name;
-@property (nonatomic, assign) BOOL useConstTime;
+
 @property (nonatomic, readonly) double secondsBetweenSignaling;
 @property (nonatomic, readonly) double motionUpdateInterval;
 @property (nonatomic, readonly) BOOL eventsWhilePhoneIsLocked;

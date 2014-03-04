@@ -13,6 +13,8 @@
 #import <CoreMotion/CoreMotion.h>
 #import <AdSupport/ASIdentifierManager.h>
 
+#define SUPPORT_SSL
+
 
 static NSString * const PANEL_SDK_VERSION = @"1.0";
 
@@ -130,7 +132,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         return NO;
     }
 
-    if (!self.settings.enabled) {
+    if (self.settings.mode == xAdPanelSdkModeDisabled) {
         NSLog(@"xAd wants panel OFF.");
         return NO;
     }
@@ -273,7 +275,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         // Motion detection does not compare to what the M7 activity monitor does.
         // We will use the const time based reporting for older devices.
 
-        self.settings.useConstTime = YES;
+        self.settings.mode = xAdPanelSdkModeConstTime;
         
         if (!self.motionManager) {
             self.motionManager = [[CMMotionManager alloc] init];
@@ -284,7 +286,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     
     
     // Use const time IF provisioned OR it is a older device
-    if (self.settings.useConstTime) {
+    if (self.settings.mode == xAdPanelSdkModeConstTime) {
         NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
         self.reportLocationTimer =[NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling target:self selector:@selector(onReportLocationTimerExpired:) userInfo:nil repeats:YES];
     }
@@ -317,30 +319,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-- (void) enableLocation {
-    
-    if (self.locationEnabled) {
-        return;
-    }
-    
-    [self.locationManager startUpdatingLocation];
-    self.locationEnabled = YES;
-    NSLog(@"GPS Started");
-}
-
-
-- (void) disableLocation {
-    
-    if (!self.locationEnabled) {
-        return;
-    }
-    
-    [self.locationManager stopUpdatingLocation];
-    self.locationEnabled = NO;
-    NSLog(@"GPS Stopped");
-}
-
-
 -(void) onStationaryConfirmed:(NSTimer *)timer {
 
     NSLog(@"    [+] stationary.");
@@ -351,6 +329,24 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     [self disableLocation];
 }
 
+
+
+
+#pragma mark - Timer Handlers
+
+
+
+- (void) onReportLocationTimerExpired:(NSTimer *)timer {
+    NSLog(@"onReportLocationTimerExpired");
+    
+    [self transmitLocation: self.locationManager.location force: NO];
+}
+
+
+
+
+
+#pragma mark - Data Transmit
 
 - (void) transmitLocation: (CLLocation*) newLocation force:(BOOL)force{
 
@@ -374,13 +370,12 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         
         CLLocationDistance distance = ([newLocation distanceFromLocation: self.lastReportedLocation]);
         
-        if (!self.settings.useConstTime && distance < self.distanceThreshold) {
+        if (self.settings.mode != xAdPanelSdkModeConstTime && distance < self.distanceThreshold) {
             // Distance threshold not exceeded yet.
             NSLog(@"UT(%0.f): %.0f m", self.distanceThreshold, distance);
             return;
         }
     }
-    
     
     self.lastReportedLocation = newLocation;
     
@@ -434,13 +429,34 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-- (void) onReportLocationTimerExpired:(NSTimer *)timer {
-    NSLog(@"onReportLocationTimerExpired");
+
+
+
+#pragma mark - GPS Management
+
+
+- (void) enableLocation {
     
-    [self transmitLocation: self.locationManager.location force: NO];
+    if (self.locationEnabled) {
+        return;
+    }
+    
+    [self.locationManager startUpdatingLocation];
+    self.locationEnabled = YES;
+    NSLog(@"GPS Started");
 }
 
 
+- (void) disableLocation {
+    
+    if (!self.locationEnabled) {
+        return;
+    }
+    
+    [self.locationManager stopUpdatingLocation];
+    self.locationEnabled = NO;
+    NSLog(@"GPS Stopped");
+}
 
 
 - (void)locationManager:(CLLocationManager *)manager
@@ -459,7 +475,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         return;
     }
 
-    if (!self.settings.useConstTime) {
+    if (self.settings.mode != xAdPanelSdkModeConstTime) {
         
         // In CONST TIME mode location is aquired from the location manager.
         // Does not rely on the events directly.
@@ -480,46 +496,28 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 
     
-#pragma mark - Data Transmit
 
-/*
- 
- Options
- 
- a) Constant time: Everytime an X amount of time elapses, we signal the server.
- 
- b) Constant distance: Everytime an X amount of distance is detected, we signal the server.
- 
- c) Density signaling: Signaling frequency changes based on store density where the user is located.
-    REST could return the 'local' distance threshold.
- 
-    e.g. While in the city, distance threshold can be say 50meters, but in the desert it can be 20miles or 1hour which ever comes first.
- 
- */
 
-#define SUPPORT_SSL
-    
+
+
+
+
+#pragma mark - URL tools
+
 + (id) getWebServiceUrl {
-
+    
 #if TARGET_IPHONE_SIMULATOR
     return [NSURL URLWithString:@"http://ec2-54-243-190-3.compute-1.amazonaws.com/rest/panel"];
 #else
-    #ifdef SUPPORT_SSL
-        return [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
-    #else
-        return [NSURL URLWithString:@"http://ap.xad.com/rest/panel"];
-    #endif
+#ifdef SUPPORT_SSL
+    return [NSURL URLWithString:@"https://ap.xad.com/rest/panel"];
+#else
+    return [NSURL URLWithString:@"http://ap.xad.com/rest/panel"];
+#endif
 #endif
 }
 
 
-
-
-
-
-
-
-#pragma mark - Private utility methods
 
 + (NSString*) toUrlEncoded:(NSDictionary*)fields
 {
@@ -558,7 +556,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-
 + (NSURLRequest*) createRequestWithUrl:(NSURL *)resourceUrl andParameters:(NSDictionary *)params {
     
     id payload = [xAdPanelSdk toUrlEncoded:params];
@@ -577,10 +574,12 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 
 
+
+#pragma mark - System information
+
 + (id) applicationName {
     return [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleDisplayName"];
 }
-
 
 
 + (id) applicationVersion {
@@ -639,21 +638,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 + (void) setUserInPanel:(BOOL)value {
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_user_in_panel"];
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @end

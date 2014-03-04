@@ -1,0 +1,17 @@
+{
+    "name": "CONST_TIME",
+    "mode": 1,
+    "eventsWhileLocked": 1,
+    "constTimeSeconds": 60,
+    "dRun": 5,
+    "dWalk": 5,
+    "dCar": 250,
+    "tStationary": 30,
+    "tActive": 3,
+    "data": 255,
+    "minAccuracy": 5,
+    "requiresM7": 0,
+    "obeyTrFlag": 1,
+    "motionUpdateInterval": 1,
+    "accelerationThreshold": 0.05
+}

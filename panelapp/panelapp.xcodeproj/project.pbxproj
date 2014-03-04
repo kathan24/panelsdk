@@ -24,6 +24,7 @@
 		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
 		DCCC76D6188F1AAA00495880 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */; };
 		DCE69D5918BADE620098440D /* xAdPanelSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE69D5818BADE620098440D /* xAdPanelSettings.m */; };
+		DCFE0F3E18C5B6F000ABFA53 /* default.json in Resources */ = {isa = PBXBuildFile; fileRef = DCFE0F3D18C5B6F000ABFA53 /* default.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +57,7 @@
 		DCCC76D5188F1AAA00495880 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		DCE69D5718BADE620098440D /* xAdPanelSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSettings.h; sourceTree = "<group>"; };
 		DCE69D5818BADE620098440D /* xAdPanelSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = xAdPanelSettings.m; sourceTree = "<group>"; };
+		DCFE0F3D18C5B6F000ABFA53 /* default.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = default.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +160,7 @@
 		DC4CEA651880705A00D90BEE /* panelsdk */ = {
 			isa = PBXGroup;
 			children = (
+				DCFE0F3D18C5B6F000ABFA53 /* default.json */,
 				DCCC76CB188F094D00495880 /* xAdPanelSdk.h */,
 				DCCC76CC188F094D00495880 /* xAdPanelSdk.m */,
 				DCE69D5718BADE620098440D /* xAdPanelSettings.h */,
@@ -226,6 +229,7 @@
 				DC17B46418A6409D0025318F /* sonar_ping.aif in Resources */,
 				DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */,
 				DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */,
+				DCFE0F3E18C5B6F000ABFA53 /* default.json in Resources */,
 				DC4CEA3B1880700C00D90BEE /* InfoPlist.strings in Resources */,
 				DC4CEA441880700C00D90BEE /* Main.storyboard in Resources */,
 			);

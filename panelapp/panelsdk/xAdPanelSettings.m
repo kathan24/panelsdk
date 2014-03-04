@@ -71,7 +71,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 }
 
 
-- (BOOL) obeyTrFlag {
+- (BOOL) obeyTrackingFlag {
     return [[self.fields objectForKey:@"obeyTrFlag"] boolValue];
 }
 
@@ -122,6 +122,11 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 - (double) timeBeforeStationary {
     return [[self.fields objectForKey:@"tStationary"] doubleValue];
+}
+
+
+- (double) timeBeforeActive {
+    return [[self.fields objectForKey:@"tActive"] doubleValue];
 }
 
 

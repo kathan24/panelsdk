@@ -125,7 +125,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     }
     
     
-    if (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
+    if (self.settings.obeyTrackingFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         NSLog(@"Tracking is prohibited");
         return NO;
     }
@@ -392,7 +392,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         return;
     }
     
-    if (self.settings.obeyTrFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
+    if (self.settings.obeyTrackingFlag && ![[ASIdentifierManager sharedManager] isAdvertisingTrackingEnabled]) {
         // Although advertising tracking is not relavant, we can choose to obey it and by default we do.
         NSLog(@"TR");
         return;

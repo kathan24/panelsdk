@@ -71,7 +71,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         NSDictionary *defaults = @{
                                    @"xad_panel_dob": [NSDate date],
                                    @"xad_panel_shareloc":@NO,
-                                   @"xad_panel_gender":@"m"
+                                   @"xad_panel_gender":@0
                                    };
         
         [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];

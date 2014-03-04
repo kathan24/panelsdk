@@ -470,7 +470,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     
     CLLocationDistance distance = ([newLocation distanceFromLocation: oldLocation]);
     
-    if (distance < 1 && newLocation.horizontalAccuracy <= oldLocation.horizontalAccuracy) {
+    if (distance < 1 && newLocation.horizontalAccuracy >= oldLocation.horizontalAccuracy) {
         // Nothing of value - same location and of equal or lesser accuracy
         return;
     }

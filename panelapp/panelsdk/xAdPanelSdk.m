@@ -370,7 +370,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         
         CLLocationDistance distance = ([newLocation distanceFromLocation: self.lastReportedLocation]);
         
-        if (self.settings.mode != xAdPanelSdkModeConstTime && distance < self.distanceThreshold) {
+        if (self.settings.mode == xAdPanelSdkModeConstDistance && distance < self.distanceThreshold) {
             // Distance threshold not exceeded yet.
             NSLog(@"UT(%0.f): %.0f m", self.distanceThreshold, distance);
             return;
@@ -475,7 +475,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         return;
     }
 
-    if (self.settings.mode != xAdPanelSdkModeConstTime) {
+    if (self.settings.mode == xAdPanelSdkModeConstDistance) {
         
         // In CONST TIME mode location is aquired from the location manager.
         // Does not rely on the events directly.

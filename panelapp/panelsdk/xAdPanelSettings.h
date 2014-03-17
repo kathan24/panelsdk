@@ -12,11 +12,25 @@
 
 
 typedef enum {
-    xAdPanelSdkModeDisabled,
-    xAdPanelSdkModeConstTime,
-    xAdPanelSdkModeConstDistance,
-    xAdPanelSdkModeGpsOnlyOnStop,
+    /* Panel SDK is disabled and no services are activated */
+    xAdPanelSdkModeDisabled = 0,
+    
+    /* GPS is active while activity is detected, and signals are sent when
+     X amount of time has passed or user becomes stationary. */
+    xAdPanelSdkModeConstTime = 1,
+    
+    /* GPS is active while activity is detected, and signals are sent when
+     the user has walked X amount of distance. Thresholds are constant 
+     but vary by activity. Requires the M7 chip, when not present switches
+     to the xAdPanelSdkModeGpsOnlyOnStop mode*/
+    xAdPanelSdkModeConstDistance = 2,
+    
+    /*  When stationary detected, then we turn the GPS on. Get the 
+     best accuracy we can and deliver. The turn GPS off again. */
+    xAdPanelSdkModeGpsOnlyOnStop = 3
+    
 } xAdPanelSdkMode;
+
 
 
 @interface xAdPanelSettings : NSObject

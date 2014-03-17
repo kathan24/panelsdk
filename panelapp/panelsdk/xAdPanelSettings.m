@@ -67,7 +67,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
 
     int value = [[self.fields objectForKey:@"mode"] intValue];
     
-    if (value < 0 || value > xAdPanelSdkModeOnStop) {
+    if (value < 0 || value > xAdPanelSdkModeGpsOnlyOnStop) {
         return xAdPanelSdkModeDisabled;
     }
     

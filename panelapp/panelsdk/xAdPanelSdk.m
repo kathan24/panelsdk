@@ -70,7 +70,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     if (obj) {
         NSDictionary *defaults = @{
                                    @"xad_panel_dob": [NSDate date],
-                                   @"xad_panel_shareloc":@NO,
+                                   @"xad_panel_opted_in":@NO,
                                    @"xad_panel_gender":@0
                                    };
         
@@ -632,11 +632,11 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 
 + (BOOL) userInPanel {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_opted_in"] boolValue];
 }
 
 + (void) setUserInPanel:(BOOL)value {
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_user_in_panel"];
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_panel_opted_in"];
 }
 
 

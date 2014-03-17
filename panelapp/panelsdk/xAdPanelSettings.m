@@ -163,7 +163,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 - (NSString*) userGender {
     
-    int genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] intValue];
+    int genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_gender"] intValue];
     
     return (genderValue == 0) ? @"m" : @"f";
 }
@@ -171,7 +171,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 
 
 - (BOOL) userInPanel {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_user_in_panel"] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_opted_in"] boolValue];
 }
 
 

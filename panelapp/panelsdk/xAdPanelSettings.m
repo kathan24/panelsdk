@@ -37,6 +37,8 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
                                                            userInfo: nil
                                                             repeats: YES];
         
+        
+        // Download the provisioning settings in the background
         [self performSelectorInBackground:@selector(retrieveSettings) withObject:nil];
     }
     
@@ -151,44 +153,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
     return [[self.fields objectForKey:@"data"] doubleValue];
 }
 
-
-
-- (NSString*) userDateOfBirth {
-    NSDate *dob = [[NSUserDefaults standardUserDefaults] objectForKey:@"xad_panel_dob"];
-    
-    return [xAdPanelSettings stringFromTime:dob];
-}
-
-
-
-- (NSString*) userGender {
-    
-    int genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_gender"] intValue];
-    
-    return (genderValue == 0) ? @"m" : @"f";
-}
-
-
-
-- (BOOL) userInPanel {
-    return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_opted_in"] boolValue];
-}
-
-
-#pragma mark - Utility methods
-
-
-+ (NSString*) stringFromTime:(NSDate*)date
-{
-    NSLocale *curLocale = [NSLocale currentLocale];
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    
-    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
-    [dateFormatter setLocale:curLocale];
-    
-    return [dateFormatter stringFromDate:date];
-}
-    
+  
 
 #pragma mark - Remote Settings Retrieval
 
@@ -229,8 +194,14 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
     // are read again only after XAD_SETTINGS_UPDATED is signalled.
     self.fields = [NSMutableDictionary dictionaryWithDictionary: provisioning];
 
-    // XAD_SETTINGS_UPDATED causes the Panel SDK to restart to ensure new settings are in effect
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"XAD_SETTINGS_UPDATED" object: self];
+    // Send notification on the main thread
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
+        
+        // XAD_SETTINGS_UPDATED causes the Panel SDK to restart to ensure new settings are in effect
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"XAD_SETTINGS_UPDATED" object: self];
+        
+    }];
+    
 }
 
 

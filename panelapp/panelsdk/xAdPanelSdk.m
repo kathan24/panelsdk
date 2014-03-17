@@ -37,10 +37,12 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 @property (nonatomic, strong) xAdPanelSettings *settings;
 @property (nonatomic, assign) CLLocationDistance distanceThreshold;
+@property (nonatomic, assign) BOOL locationEnabled;
 
+    
+// Without backgroundTask, the app does not receive events in the BG
 @property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTask;
 
-@property (nonatomic, assign) BOOL locationEnabled;
 
 @end
 
@@ -88,6 +90,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
+
 - (void) stopPanelServices {
     [self disableLocation];
     [self.activityManager stopActivityUpdates];
@@ -121,7 +124,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     
     // Any of these cases is reason enough not to start the SDK.
     
-    if (!self.settings.userInPanel) {
+    if (![xAdPanelSdk userInPanel]) {
         NSLog(@"User is not in panel.");
         return NO;
     }
@@ -221,8 +224,11 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
                                             withHandler:^(CMDeviceMotion *deviceMotion, NSError *error){
                                                 
                                                 if (error) {
+                                                    NSLog(@"motionManager error %@", error.localizedDescription);
                                                     return;
                                                 }
+                                                
+                                                NSLog(@"Shaking the phone");
                                                 
                                                 CMAcceleration userAcceleration = deviceMotion.userAcceleration;
                                                 
@@ -283,8 +289,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         
         [self enableMotionDetection];
     }
-    
-    
+
     // Use const time IF provisioned OR it is a older device
     if (self.settings.mode == xAdPanelSdkModeConstTime) {
         NSLog(@"Starting reportLocationTimer %.0f",  self.settings.secondsBetweenSignaling);
@@ -381,7 +386,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
     
     // Missing case: If const time, then only the timer can send
 
-    if (!self.settings.userInPanel) {
+    if (![xAdPanelSdk userInPanel]) {
         // User does has not opted-in.
         NSLog(@"User is not in panel.");
         return;
@@ -393,14 +398,21 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
         return;
     }
     
-    NSURL *resourceUrl = [xAdPanelSdk getWebServiceUrl];
+    NSString *userDateOfBirth = [xAdPanelSdk stringFromTime: [[NSUserDefaults standardUserDefaults] objectForKey:@"xad_panel_dob"]];
     
+    xAdPanelSdkGender genderValue = [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_gender"] intValue];
+    NSString *userGender = (genderValue == GenderMale) ? @"m" : @"f";
+
+    
+    NSURL *resourceUrl = [xAdPanelSdk getWebServiceUrl];
+  
+
     NSDictionary *params = @{
                              @"sdk_ver": PANEL_SDK_VERSION,
                              @"sdk_app": [xAdPanelSdk applicationName],
                              @"sdk_test": self.settings.name,
-                             @"user_dob": self.settings.userDateOfBirth,
-                             @"user_gender": self.settings.userGender,
+                             @"user_dob": userDateOfBirth,
+                             @"user_gender": userGender,
                              @"geo_ha": [NSString stringWithFormat:@"%.0f", newLocation.horizontalAccuracy],
                              @"geo_va": [NSString stringWithFormat:@"%.0f", newLocation.verticalAccuracy],
                              @"geo_lat": [NSString stringWithFormat:@"%f", newLocation.coordinate.latitude],
@@ -502,7 +514,8 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 
 
-#pragma mark - URL tools
+#pragma mark - Utility Methods
+    
 
 + (id) getWebServiceUrl {
     
@@ -573,7 +586,19 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-
+    
++ (NSString*) stringFromTime:(NSDate*)date
+{
+    NSLocale *curLocale = [NSLocale currentLocale];
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        
+    [dateFormatter setDateStyle:NSDateFormatterShortStyle];
+    [dateFormatter setLocale:curLocale];
+        
+    return [dateFormatter stringFromDate:date];
+}
+    
+    
 
 #pragma mark - System information
 
@@ -608,9 +633,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 
-
-
-
+    
 #pragma mark - User Settings
 
 + (NSDate*) dateOfBirth {
@@ -618,7 +641,9 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 }
 
 + (void) setDateOfBirth:(NSDate*)value {
+    NSLog(@"setDateOfBirth %@", value);
     [[NSUserDefaults standardUserDefaults] setObject: value forKey:@"xad_panel_dob"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
@@ -628,15 +653,19 @@ static NSString * const PANEL_SDK_VERSION = @"1.0";
 
 + (void) setGender:(xAdPanelSdkGender)value {
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithInt:value] forKey:@"xad_panel_gender"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 
 + (BOOL) userInPanel {
+    NSLog(@"userInPanel");
     return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_opted_in"] boolValue];
 }
 
 + (void) setUserInPanel:(BOOL)value {
+    NSLog(@"setUserInPanel");
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_panel_opted_in"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 

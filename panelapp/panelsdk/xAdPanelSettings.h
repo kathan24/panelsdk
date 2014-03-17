@@ -44,10 +44,4 @@ typedef enum {
 
 @property (nonatomic, readonly) NSUInteger dataFields;
 
-@property (nonatomic, readonly) id userGender;
-@property (nonatomic, readonly) id userDateOfBirth;
-@property (nonatomic, readonly) BOOL userInPanel;
-
-
-
 @end

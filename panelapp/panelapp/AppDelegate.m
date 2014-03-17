@@ -14,15 +14,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     NSLog(@"didFinishLaunchingWithOptions");
-    
-    NSDateFormatter* dtFormatter = [[NSDateFormatter alloc] init];
-    [dtFormatter setLocale:[NSLocale systemLocale]];
-    [dtFormatter setDateFormat:@"yyyy-MM-dd"];
-    
-    [xAdPanelSdk setDateOfBirth:[dtFormatter dateFromString:@"1974-09-11"]];
-    [xAdPanelSdk setGender: GenderMale];
-    [xAdPanelSdk setUserInPanel:YES];
-    
+
     [xAdPanelSdk startPanelSdkWithAppKey:@"feb38d8f-9cf0-11e3-b9b8-14109fd63bf9"];
     
     return YES;

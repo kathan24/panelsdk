@@ -134,7 +134,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
 }
 
 
-- (double) minGeoAccuracy {
+- (double) minHorizontalAccuracy {
     return [[self.fields objectForKey:@"minAccuracy"] doubleValue];
 }
 
@@ -148,7 +148,10 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
     return [[self.fields objectForKey:@"accelerationThreshold"] doubleValue];
 }
 
-
+- (double) distanceFilter {
+    return [[self.fields objectForKey:@"distanceFilter"] doubleValue];
+}
+    
 - (NSUInteger) dataFields {
     return [[self.fields objectForKey:@"data"] doubleValue];
 }

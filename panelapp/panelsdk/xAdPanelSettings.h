@@ -15,7 +15,7 @@ typedef enum {
     xAdPanelSdkModeDisabled,
     xAdPanelSdkModeConstTime,
     xAdPanelSdkModeConstDistance,
-    xAdPanelSdkModeOnStop,
+    xAdPanelSdkModeGpsOnlyOnStop,
 } xAdPanelSdkMode;
 
 
@@ -38,9 +38,10 @@ typedef enum {
 @property (nonatomic, readonly) double distanceWhileDriving;
 @property (nonatomic, readonly) double timeBeforeStationary;
 @property (nonatomic, readonly) double timeBeforeActive;
-@property (nonatomic, readonly) double minGeoAccuracy;
+@property (nonatomic, readonly) double minHorizontalAccuracy;
 @property (nonatomic, readonly) double maxGeoAge;
 @property (nonatomic, readonly) double accelerationThreshold;
+@property (nonatomic, readonly) double distanceFilter;
 
 @property (nonatomic, readonly) NSUInteger dataFields;
 

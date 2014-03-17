@@ -10,6 +10,7 @@
     "tActive": 3,
     "data": 255,
     "minAccuracy": 5,
+    "distanceFilter": 3.0,
     "requiresM7": 0,
     "obeyTrFlag": 1,
     "motionUpdateInterval": 1,

@@ -11,7 +11,7 @@
 
 static NSString * const PROVISIONING_LINK = @"http://cdn.xadcentral.com/content/provisioning/%@.json";
 
-static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
+static double TIME_BETWEEN_SETTINGS_RELOAD = 21600; // 6 hours
 
 
 @interface xAdPanelSettings ()
@@ -175,6 +175,8 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
 }
 
 
+#pragma mark - Utility methods
+
 
 + (NSString*) stringFromTime:(NSDate*)date
 {
@@ -186,7 +188,9 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
     
     return [dateFormatter stringFromDate:date];
 }
+    
 
+#pragma mark - Remote Settings Retrieval
 
 - (void) retrieveSettings {
     
@@ -202,16 +206,14 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
         provisioningUrl = [NSURL  URLWithString: [NSString stringWithFormat:PROVISIONING_LINK, @"default"] ];
         provisioningData = [NSData dataWithContentsOfURL: provisioningUrl];
     }
-    
+
     if (!provisioningData) {
         NSLog(@"Error: Unable to retrieve provisioning settings");
+        // At thing poing XAD_SETTINGS_UPDATED is never called and the SDK
+        // will not start. Why not use the default.json in the bundle?
+        // Due to lack of control.
         return;
     }
-    
-#ifdef DEBUG
-    NSString *json = [[NSString alloc] initWithData:provisioningData encoding:NSUTF8StringEncoding];
-    NSLog(@"JSON: %@", json);
-#endif
 
     NSError *localError = nil;
     NSDictionary *provisioning = [NSJSONSerialization JSONObjectWithData: provisioningData options: 0 error: &localError];
@@ -219,6 +221,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
     if (!provisioning) {
         
         NSLog(@"Failed to get settings. %@", localError);
+        // Same here. No settings, no panel!
         return;
     }
     
@@ -226,6 +229,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
     // are read again only after XAD_SETTINGS_UPDATED is signalled.
     self.fields = [NSMutableDictionary dictionaryWithDictionary: provisioning];
 
+    // XAD_SETTINGS_UPDATED causes the Panel SDK to restart to ensure new settings are in effect
     [[NSNotificationCenter defaultCenter] postNotificationName:@"XAD_SETTINGS_UPDATED" object: self];
 }
 

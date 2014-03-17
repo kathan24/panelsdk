@@ -18,7 +18,6 @@
 		DC4CEA471880700C00D90BEE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA461880700C00D90BEE /* ViewController.m */; };
 		DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA481880700C00D90BEE /* Images.xcassets */; };
 		DC4CEA69188070FD00D90BEE /* PanelSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */; };
-		DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */; };
 		DC4CEA6E1880728100D90BEE /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6D1880728100D90BEE /* CoreLocation.framework */; };
 		DC4CEA701880728900D90BEE /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC4CEA6F1880728900D90BEE /* CoreMotion.framework */; };
 		DCCC76CD188F094D00495880 /* xAdPanelSdk.m in Sources */ = {isa = PBXBuildFile; fileRef = DCCC76CC188F094D00495880 /* xAdPanelSdk.m */; };
@@ -49,7 +48,6 @@
 		DC4CEA5B1880700C00D90BEE /* panelappTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = panelappTests.m; sourceTree = "<group>"; };
 		DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelSettingsViewController.h; path = ../panelsdk/PanelSettingsViewController.h; sourceTree = "<group>"; };
 		DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PanelSettingsViewController.m; path = ../panelsdk/PanelSettingsViewController.m; sourceTree = "<group>"; };
-		DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelSettingsViewController.xib; path = ../panelsdk/PanelSettingsViewController.xib; sourceTree = "<group>"; };
 		DC4CEA6D1880728100D90BEE /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DC4CEA6F1880728900D90BEE /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
 		DCCC76CB188F094D00495880 /* xAdPanelSdk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xAdPanelSdk.h; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 				DC4CEA461880700C00D90BEE /* ViewController.m */,
 				DC4CEA66188070FD00D90BEE /* PanelSettingsViewController.h */,
 				DC4CEA67188070FD00D90BEE /* PanelSettingsViewController.m */,
-				DC4CEA68188070FD00D90BEE /* PanelSettingsViewController.xib */,
 				DC4CEA481880700C00D90BEE /* Images.xcassets */,
 				DC4CEA371880700C00D90BEE /* Supporting Files */,
 			);
@@ -227,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC17B46418A6409D0025318F /* sonar_ping.aif in Resources */,
-				DC4CEA6A188070FD00D90BEE /* PanelSettingsViewController.xib in Resources */,
 				DC4CEA491880700C00D90BEE /* Images.xcassets in Resources */,
 				DCFE0F3E18C5B6F000ABFA53 /* default.json in Resources */,
 				DC4CEA3B1880700C00D90BEE /* InfoPlist.strings in Resources */,

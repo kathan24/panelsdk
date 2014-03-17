@@ -10,6 +10,6 @@
 
 @interface PanelSettingsViewController : UIViewController
 
-+ (PanelSettingsViewController*) create;
+
     
 @end

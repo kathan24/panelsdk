@@ -59,11 +59,6 @@
 }
     
     
-- (IBAction)onSettingsTapped:(id)sender {
-    
-    PanelSettingsViewController *settings = [PanelSettingsViewController create];
-    
-    [self presentViewController: settings animated:YES completion: nil];
-}
+
 
 @end

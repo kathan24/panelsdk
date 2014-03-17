@@ -191,6 +191,11 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     self.locationManager.distanceFilter = self.settings.distanceFilter;
 
+    if (![CMMotionActivityManager isActivityAvailable] && self.settings.mode == xAdPanelSdkModeConstDistance) {
+        NSLog(@"No M7 - switching modes");
+        self.settings.mode = xAdPanelSdkModeGpsOnlyOnStop;
+    }
+    
     switch (self.settings.mode) {
         case xAdPanelSdkModeGpsOnlyOnStop:
             NSLog(@"MODE: GpsOnlyOnStop");
@@ -327,12 +332,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     if ([CMMotionActivityManager isActivityAvailable]) {
         [self enableActivityDetection];
     } else {
-        
-        // ConstDistance requires the M7 chip, switch over mode.
-        if (self.settings.mode == xAdPanelSdkModeConstDistance) {
-            self.settings.mode = xAdPanelSdkModeGpsOnlyOnStop;
-        }
-        
         [self enableMotionDetection];
     }
 }

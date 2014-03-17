@@ -37,7 +37,7 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
                                                            userInfo: nil
                                                             repeats: YES];
         
-        [self performSelector:@selector(retrieveSettings) withObject:nil afterDelay:0];
+        [self performSelectorInBackground:@selector(retrieveSettings) withObject:nil];
     }
     
     return self;
@@ -222,6 +222,8 @@ static double TIME_BETWEEN_SETTINGS_RELOAD = 21600;
         return;
     }
     
+    // Could add synch, but all properties are RO and the settings
+    // are read again only after XAD_SETTINGS_UPDATED is signalled.
     self.fields = [NSMutableDictionary dictionaryWithDictionary: provisioning];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"XAD_SETTINGS_UPDATED" object: self];

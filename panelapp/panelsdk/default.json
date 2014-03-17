@@ -1,5 +1,5 @@
 {
-    "name": "CONST_TIME",
+    "name": "DEFAULTS",
     "mode": 1,
     "eventsWhileLocked": 1,
     "constTimeSeconds": 60,

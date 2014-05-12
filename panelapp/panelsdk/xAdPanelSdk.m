@@ -19,13 +19,6 @@
 static NSString * const PANEL_SDK_VERSION = @"1.2";
 
 
-// Required to allow HTTPS connections to xAd's Servers
-@interface NSURLRequest (Extension)
-    + (BOOL)allowsAnyHTTPSCertificateForHost:(NSString*)host;
-    + (void)setAllowsAnyHTTPSCertificate:(BOOL)allow forHost:(NSString*)host;
-@end
-
-
 @interface xAdPanelSdk ()
 @property (strong, nonatomic) NSTimer *stationaryConfirmTimer;
 @property (strong, nonatomic) NSTimer *reportLocationTimer;
@@ -39,10 +32,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 @property (nonatomic, strong) xAdPanelSettings *settings;
 @property (nonatomic, assign) CLLocationDistance distanceThreshold;
 @property (nonatomic, assign) BOOL locationEnabled;
-
-// Without backgroundTask, the app does not receive events in the BG
-@property (nonatomic, assign) UIBackgroundTaskIdentifier backgroundTask;
-
 
 @end
 
@@ -64,18 +53,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     }
 }
 
-    
-- (void) enableEventsWhenPhoneLocked {
-    
-    // Needed to keep location events while phone is locked.
-    
-    UIApplication *app = [UIApplication sharedApplication];
-    self.backgroundTask = 0;
-    self.backgroundTask = [app beginBackgroundTaskWithExpirationHandler:^{ [app endBackgroundTask: self.backgroundTask]; }];
-    
-}
-    
-    
+
 #pragma mark - Starting/Stopping the Services
 
 + (void) startPanelSdkWithAppKey:(id)appKey {
@@ -178,11 +156,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
         NSLog(@"Panel SDK is DISABLED");
         return;
     }
-    
-    if (self.settings.eventsWhilePhoneIsLocked) {
-        [self enableEventsWhenPhoneLocked];
-    }
-    
+
     if (!self.locationManager) {
         self.locationManager = [[CLLocationManager alloc] init];
         self.locationManager.delegate = self;
@@ -583,9 +557,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
                              };
     
     NSURLRequest *httpRequest = [xAdPanelSdk createRequestWithUrl:resourceUrl andParameters:params];
-    
-    [NSURLRequest setAllowsAnyHTTPSCertificate:YES forHost:[resourceUrl host]];
-    
+
     [NSURLConnection sendAsynchronousRequest:httpRequest
                                        queue:[NSOperationQueue mainQueue]
                            completionHandler:^(NSURLResponse *urlResponse, NSData *data, NSError *connectionError) {
@@ -607,7 +579,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     
 
 + (id) getWebServiceUrl {
-    return [NSURL URLWithString:@"http://ec2-54-243-190-4.compute-1.amazonaws.com/rest/panel"];
    
 #if TARGET_IPHONE_SIMULATOR
     return [NSURL URLWithString:@"http://ec2-54-243-190-3.compute-1.amazonaws.com/rest/panel"];

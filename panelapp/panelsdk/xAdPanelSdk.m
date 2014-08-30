@@ -32,7 +32,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 @property (nonatomic, strong) xAdPanelSettings *settings;
 @property (nonatomic, assign) CLLocationDistance distanceThreshold;
 @property (nonatomic, assign) BOOL locationEnabled;
-
+@property (nonatomic, assign) NSInteger locationImproveAccuracyAttempts;
 @end
 
 
@@ -139,13 +139,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 #endif
     
     return YES;
-    
-    
-    // NOTE: isActivityAvailable is only available on devices with M7.
-    // The M7 guaratees a battery effiecient use of the GPS by detecting
-    // if the user is stationary and disabling it.
-    
-    // The panel SDK might take effect during the next launch if all conditions are met
 }
     
     
@@ -164,44 +157,8 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     
     self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
     self.locationManager.distanceFilter = self.settings.distanceFilter;
-
-    if (![CMMotionActivityManager isActivityAvailable] && self.settings.mode == xAdPanelSdkModeConstDistance) {
-        NSLog(@"No M7 - switching modes");
-        self.settings.mode = xAdPanelSdkModeGpsOnlyOnStop;
-    }
-    
-    switch (self.settings.mode) {
-        case xAdPanelSdkModeGpsOnlyOnStop:
-            NSLog(@"MODE: GpsOnlyOnStop");
-            [self startUpdatingUserActivity];
-            [self stopUpdatingLocation];
-            break;
-        
-        case xAdPanelSdkModeConstDistance:
-            NSLog(@"MODE: ConstDistance");
-            self.distanceThreshold = self.settings.distanceWhileWalking;
-            [self startUpdatingUserActivity];
-            [self startUpdatingLocation];
-            break;
-        
-        case xAdPanelSdkModeConstTime:
-            NSLog(@"MODE: ConstTime");
-            [self startUpdatingUserActivity];
-            [self startUpdatingLocation];
-            self.reportLocationTimer = [NSTimer scheduledTimerWithTimeInterval: self.settings.secondsBetweenSignaling
-                                                                        target: self
-                                                                      selector: @selector(onReportLocationTimerExpired:)
-                                                                      userInfo: nil
-                                                                       repeats: YES];
-            break;
-        
-        case xAdPanelSdkModeDisabled:
-        default:
-            NSLog(@"MODE: Disabled");
-            return;
-    }
-    
-    
+    [self startUpdatingUserActivity];
+    [self stopUpdatingLocation];
 }
 
 
@@ -212,38 +169,14 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 - (void) onActivityDetected:(id)activity {
     
     CLLocationAccuracy newAccuracy = kCLLocationAccuracyBest;
-    
-    if (self.settings.mode == xAdPanelSdkModeConstDistance) {
-        if ([activity walking]) {
-            NSLog(@"    [+] walking");
-            self.distanceThreshold = self.settings.distanceWhileWalking;
-            newAccuracy = kCLLocationAccuracyBest;
-        } else if ([activity running]) {
-            NSLog(@"    [+] running");
-            self.distanceThreshold = self.settings.distanceWhileRunning;
-            newAccuracy = kCLLocationAccuracyBest;
-        } else if ([activity automotive]) {
-            NSLog(@"    [+] automotive");
-            self.distanceThreshold = self.settings.distanceWhileDriving;
-            newAccuracy = kCLLocationAccuracyBestForNavigation;
-        }
-        
+
+    if (activity == nil) {
+        newAccuracy = kCLLocationAccuracyBest;
+        // User activity from non-M7 device
+        NSLog(@"    [+] activity");
     }
-    
-    
-        if (activity == nil) {
-            self.distanceThreshold = self.settings.distanceWhileWalking;
-            newAccuracy = kCLLocationAccuracyBest;
-            // User activity from non-M7 device
-            NSLog(@"    [+] activity");
-        }
-    
     
     self.locationManager.desiredAccuracy = newAccuracy;
-    
-    if (self.settings.mode != xAdPanelSdkModeGpsOnlyOnStop) {
-        [self startUpdatingLocation];
-    }
 }
     
 
@@ -270,6 +203,8 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
         // Activity detected. Cancel timer and adjust based on activity type.
         [self.stationaryConfirmTimer invalidate];
         self.stationaryConfirmTimer = nil;
+    } else {
+        NSLog(@"New activity detected.");
     }
 }
 
@@ -277,22 +212,9 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 -(void) onStationaryConfirmed:(NSTimer *)timer {
     
     NSLog(@"    [+] stationary.");
-    
-    switch (self.settings.mode) {
-        case xAdPanelSdkModeGpsOnlyOnStop:
-            [self startUpdatingLocation];
-            break;
-        
-        case xAdPanelSdkModeConstDistance:
-        case xAdPanelSdkModeConstTime:
-            [self stopUpdatingLocation];
-            break;
-
-        case xAdPanelSdkModeDisabled:
-        default:
-            NSLog(@"Unknown mode or disabled - terminating services");
-            [self stopPanelServices];
-    }
+    [self.stationaryConfirmTimer invalidate];
+    self.stationaryConfirmTimer = nil;
+    [self startUpdatingLocation];
 }
 
     
@@ -398,6 +320,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     
     [self.locationManager startUpdatingLocation];
     self.locationEnabled = YES;
+    self.locationImproveAccuracyAttempts = 5;
     NSLog(@"GPS Started");
 }
 
@@ -410,6 +333,7 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     
     [self.locationManager stopUpdatingLocation];
     self.locationEnabled = NO;
+    self.locationImproveAccuracyAttempts = 0;
     NSLog(@"GPS Stopped");
 }
 
@@ -418,13 +342,18 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation
 {
+    
+    NSLog(@"didUpdateToLocation: %ld", (long)self.locationImproveAccuracyAttempts);
 
     if (newLocation.coordinate.latitude == 0 && newLocation.coordinate.longitude == 0) {
         NSLog(@"Invalid Lat/Lon");
         return;
     }
     
-    if (self.settings.minHorizontalAccuracy > 0 && newLocation.horizontalAccuracy > self.settings.minHorizontalAccuracy) {
+    if (self.settings.minHorizontalAccuracy > 0 && newLocation.horizontalAccuracy > self.settings.minHorizontalAccuracy && self.locationImproveAccuracyAttempts > 0) {
+
+        self.locationImproveAccuracyAttempts--;
+        
         NSLog(@"Low Accuracy %0.f", newLocation.horizontalAccuracy);
         return;
     }
@@ -437,82 +366,25 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 
     NSLog(@"Location Acquired");
 
-    switch (self.settings.mode) {
-
-        case xAdPanelSdkModeConstTime:
-            [self handleConstTime: newLocation];
-            break;
-        
-        case xAdPanelSdkModeGpsOnlyOnStop:
-            [self handleOnStopOnly: newLocation];
-            break;
-
-        case xAdPanelSdkModeConstDistance:
-            [self handleConstDistance: newLocation];
-            break;
-        
-        case xAdPanelSdkModeDisabled:
-        default:
-            NSLog(@"Disabling GPS");
-            [self stopUpdatingLocation];
-            break;
-    }
-    
+    [self transmitLocation: newLocation];
+    [self stopUpdatingLocation];
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
     if ([[error domain] isEqualToString: kCLErrorDomain] && [error code] == kCLErrorDenied) {
         
-        NSLog(@"GPS ERROR");
+        NSLog(@"GPS ERROR - ACCESS DENIED BY USER");
         
         [self stopPanelServices];
-    }
-}
-
-
-#pragma mark - Location Handlers Per Mode
-    
-    
-- (void) handleConstTime:(CLLocation*)newLocation {
-    self.lastReportedLocation = newLocation;
-
-    // Waits for the timer to transmit
-    // onReportLocationTimerExpired gets called
-}
-
-    
-- (void) handleOnStopOnly:(CLLocation*)newLocation {
-
-    [self transmitLocation: newLocation];
-    [self stopUpdatingLocation];
-}
-    
-    
-- (void) handleConstDistance:(CLLocation*)newLocation {
-    
-    CLLocationDistance distance = -1.0; // Covers first time cases - transmit first good location
-    
-    if (self.lastReportedLocation) {
-        distance = ([newLocation distanceFromLocation: self.lastReportedLocation]);
-    }
-    
-    if (distance < self.distanceThreshold) {
-        // Distance threshold not exceeded yet.
-        NSLog(@"UT(%0.f): %.0f m", self.distanceThreshold, distance);
         return;
     }
     
-    self.lastReportedLocation = newLocation;
-    [self transmitLocation: newLocation];
+    // Unable to get user location at this location
+    [self stopUpdatingLocation];
 }
-    
 
- 
-    
- 
 
- 
 #pragma mark - Data Transmit
  
 - (void) transmitLocation: (CLLocation*) newLocation {
@@ -702,7 +574,6 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 }
 
 + (void) setDateOfBirth:(NSDate*)value {
-    NSLog(@"setDateOfBirth %@", value);
     [[NSUserDefaults standardUserDefaults] setObject: value forKey:@"xad_panel_dob"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
@@ -719,12 +590,10 @@ static NSString * const PANEL_SDK_VERSION = @"1.2";
 
 
 + (BOOL) userInPanel {
-    NSLog(@"userInPanel");
     return [[[NSUserDefaults standardUserDefaults] stringForKey:@"xad_panel_opted_in"] boolValue];
 }
 
 + (void) setUserInPanel:(BOOL)value {
-    NSLog(@"setUserInPanel");
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:value] forKey:@"xad_panel_opted_in"];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
